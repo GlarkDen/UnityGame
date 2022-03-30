@@ -6,8 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class FinishLogin : MonoBehaviour
 {
-    public string Button;
-
     public void Scene ()
     {
         SceneManager.LoadScene("AdministratorMainMenu");
@@ -18,19 +16,12 @@ public class FinishLogin : MonoBehaviour
         Debug.Log(gameObject.name);
     }
 
-    public void Text1()
-    {
-        Debug.Log("Text");
-    }
-
     public Button buttonLogin;
     public Button buttonFinish;
 
     void Start()
     {
         buttonLogin.onClick.AddListener(Text);
-        buttonLogin.onClick.AddListener(Text1);
-
         buttonFinish.onClick.AddListener(Scene);
     }
 }

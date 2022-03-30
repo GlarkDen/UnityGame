@@ -7,7 +7,7 @@ public class LoginGame : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        Debug.Log("Hello World");
+        Debug.Log("Hello!");
     }
 
     // Update is called once per frame
