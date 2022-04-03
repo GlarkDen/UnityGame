@@ -9,6 +9,6 @@ public class ScrollConstPosition : MonoBehaviour
 
     public void SavePosition()
     {
-        Content.position = new Vector2(Content.rect.x, -Content.rect.height);
+        Content.localPosition = new Vector2(Content.localPosition.x, -Content.rect.height);
     }
 }
