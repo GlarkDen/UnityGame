@@ -8,61 +8,61 @@ public class StartGame : MonoBehaviour
 
     void Start()
     {
-        Settings set = new Settings();
+        //Settings set = new Settings();
 
-        set.a = 5;
-        set.b = "Ïנמגונךא";
+        //set.a = 5;
+        //set.b = "Ïנמגונךא";
 
-        Serialization.SaveBinaryFile(set, "Ôאיכ");
+        //Serialization.SaveBinaryFile(set, "Ôאיכ");
 
-        Debug.Log("Checkung-1...");
+        //Debug.Log("Checkung-1...");
 
-        set = Serialization.LoadBinaryFile<Settings>("Ôאיכ");
+        //set = Serialization.LoadBinaryFile<Settings>("Ôאיכ");
 
-        Debug.Log(set.a);
-        Debug.Log(set.b);
+        //Debug.Log(set.a);
+        //Debug.Log(set.b);
 
-        Debug.Log("Checkung-2...");
+        //Debug.Log("Checkung-2...");
 
-        List<Settings> settings = new List<Settings>();
+        //List<Settings> settings = new List<Settings>();
 
-        Debug.Log("Checkung-3...");
+        //Debug.Log("Checkung-3...");
 
-        settings.Add(new Settings(2, "aaa"));
+        //settings.Add(new Settings(2, "aaa"));
 
-        Debug.Log("Checkung-4...");
+        //Debug.Log("Checkung-4...");
 
-        settings.Add(new Settings(5, "bbb"));
-        settings.Add(new Settings(10, "ccc"));
+        //settings.Add(new Settings(5, "bbb"));
+        //settings.Add(new Settings(10, "ccc"));
 
-        Debug.Log(settings.Count);
+        //Debug.Log(settings.Count);
 
-        Debug.Log("Checkung-5...");
+        //Debug.Log("Checkung-5...");
 
-        Serialization.SaveBinaryFile(settings, "Ôאיכ-3");
+        //Serialization.SaveBinaryFile(settings, "Ôאיכ-3");
 
-        Debug.Log("Checkung-6...");
+        //Debug.Log("Checkung-6...");
 
-        List<Settings> set2 = Serialization.LoadBinaryFile<List<Settings>>("Ôאיכ-3");
+        //List<Settings> set2 = Serialization.LoadBinaryFile<List<Settings>>("Ôאיכ-3");
 
-        Debug.Log("Checkung-7...");
+        //Debug.Log("Checkung-7...");
 
-        Debug.Log(set2);
+        //Debug.Log(set2);
 
-        Debug.Log(set2.Count);
+        //Debug.Log(set2.Count);
 
-        Debug.Log("Checkung-8...");
+        //Debug.Log("Checkung-8...");
 
-        Dictionary<int, Settings> dict = new Dictionary<int, Settings>();
-        dict[10] = new Settings(5, "bbb");
-        dict[15] = new Settings(10, "ccc");
+        //Dictionary<int, Settings> dict = new Dictionary<int, Settings>();
+        //dict[10] = new Settings(5, "bbb");
+        //dict[15] = new Settings(10, "ccc");
 
-        Serialization.SaveBinaryFile(dict, "Ôאיכ-4");
-        dict = Serialization.LoadBinaryFile<Dictionary<int, Settings>>("Ôאיכ-4");
+        //Serialization.SaveBinaryFile(dict, "Ôאיכ-4");
+        //dict = Serialization.LoadBinaryFile<Dictionary<int, Settings>>("Ôאיכ-4");
 
-        Debug.Log("Checkung-9...");
+        //Debug.Log("Checkung-9...");
 
-        Debug.Log(dict[10].a);
+        //Debug.Log(dict[10].a);
     }
 }
 
