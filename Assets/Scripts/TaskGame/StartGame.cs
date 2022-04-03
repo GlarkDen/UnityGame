@@ -13,11 +13,11 @@ public class StartGame : MonoBehaviour
         set.a = 5;
         set.b = "Ïנמגונךא";
 
-        Serialization.SaveJsonFile(set, "Ôאיכ");
+        Serialization.SaveBinaryFile(set, "Ôאיכ");
 
         Debug.Log("Checkung-1...");
 
-        set = Serialization.LoadJsonFile<Settings>("Ôאיכ");
+        set = Serialization.LoadBinaryFile<Settings>("Ôאיכ");
 
         Debug.Log(set.a);
         Debug.Log(set.b);
@@ -39,11 +39,11 @@ public class StartGame : MonoBehaviour
 
         Debug.Log("Checkung-5...");
 
-        Serialization.SaveJsonFile(settings, "Ôאיכ-3", false);
+        Serialization.SaveBinaryFile(settings, "Ôאיכ-3");
 
         Debug.Log("Checkung-6...");
 
-        List<Settings> set2 = Serialization.LoadJsonFile<List<Settings>>("Ôאיכ-3", false);
+        List<Settings> set2 = Serialization.LoadBinaryFile<List<Settings>>("Ôאיכ-3");
 
         Debug.Log("Checkung-7...");
 
@@ -57,8 +57,8 @@ public class StartGame : MonoBehaviour
         dict[10] = new Settings(5, "bbb");
         dict[15] = new Settings(10, "ccc");
 
-        Serialization.SaveJsonFile(dict, "Ôאיכ-4", false);
-        dict = Serialization.LoadJsonFile<Dictionary<int, Settings>>("Ôאיכ-4", false);
+        Serialization.SaveBinaryFile(dict, "Ôאיכ-4");
+        dict = Serialization.LoadBinaryFile<Dictionary<int, Settings>>("Ôאיכ-4");
 
         Debug.Log("Checkung-9...");
 
@@ -66,6 +66,7 @@ public class StartGame : MonoBehaviour
     }
 }
 
+[System.Serializable]
 public class Settings
 {
     public int a;
@@ -80,5 +81,10 @@ public class Settings
     public Settings()
     {
 
+    }
+
+    public Settings Clone()
+    {
+        return new Settings(a, b);
     }
 }
