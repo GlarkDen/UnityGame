@@ -1,90 +1,314 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System;
 
 public class StartGame : MonoBehaviour
 {
-    // solutionEfficiency
+    float solutionEfficiency;
 
-    void Start()
+    string taskText;
+
+    public Text timer;
+
+    private void Start()
     {
-        //Settings set = new Settings();
+        Timer.timer = timer;
+        Timer.stopTimer = Stop;
+        Timer.Start(new Clock(10));
+    }
 
-        //set.a = 5;
-        //set.b = "Проверка";
-
-        //Serialization.SaveBinaryFile(set, "Файл");
-
-        //Debug.Log("Checkung-1...");
-
-        //set = Serialization.LoadBinaryFile<Settings>("Файл");
-
-        //Debug.Log(set.a);
-        //Debug.Log(set.b);
-
-        //Debug.Log("Checkung-2...");
-
-        //List<Settings> settings = new List<Settings>();
-
-        //Debug.Log("Checkung-3...");
-
-        //settings.Add(new Settings(2, "aaa"));
-
-        //Debug.Log("Checkung-4...");
-
-        //settings.Add(new Settings(5, "bbb"));
-        //settings.Add(new Settings(10, "ccc"));
-
-        //Debug.Log(settings.Count);
-
-        //Debug.Log("Checkung-5...");
-
-        //Serialization.SaveBinaryFile(settings, "Файл-3");
-
-        //Debug.Log("Checkung-6...");
-
-        //List<Settings> set2 = Serialization.LoadBinaryFile<List<Settings>>("Файл-3");
-
-        //Debug.Log("Checkung-7...");
-
-        //Debug.Log(set2);
-
-        //Debug.Log(set2.Count);
-
-        //Debug.Log("Checkung-8...");
-
-        //Dictionary<int, Settings> dict = new Dictionary<int, Settings>();
-        //dict[10] = new Settings(5, "bbb");
-        //dict[15] = new Settings(10, "ccc");
-
-        //Serialization.SaveBinaryFile(dict, "Файл-4");
-        //dict = Serialization.LoadBinaryFile<Dictionary<int, Settings>>("Файл-4");
-
-        //Debug.Log("Checkung-9...");
-
-        //Debug.Log(dict[10].a);
+    public void Stop()
+    {
+        Debug.Log("Я живой");
     }
 }
 
 [System.Serializable]
-public class Settings
+public class Clock
 {
-    public int a;
-    public string b;
+    private int seconds;
+    private int minutes;
+    private int hours;
 
-    public Settings(int a, string b)
+    public Clock(int seconds = 0, int minutes = 0, int hours = 0)
     {
-        this.a = a;
-        this.b = b;
+        this.seconds = seconds;
+        this.minutes = minutes;
+        this.hours = hours;
     }
 
-    public Settings()
+    public int Seconds
     {
+        get => seconds;
+        set
+        {
+            if (value < 0)
+                throw new Exception("SetSecondsError");
 
+            if (value > 59)
+            {
+                Minutes += value / 60;
+                seconds = value % 60;
+            }
+            else
+            {
+                seconds = value;
+            }
+        }
     }
 
-    public Settings Clone()
+    public int Minutes
     {
-        return new Settings(a, b);
+        get => minutes;
+        set
+        {
+            if (value < 0)
+                throw new Exception("SetMinuteError");
+
+            if (value > 59)
+            {
+                Hours += value / 60;
+                minutes = value % 60;
+            }
+            else
+            {
+                minutes = value;
+            }
+        }
+    }
+
+    public int Hours
+    {
+        get => hours;
+        set
+        {
+            if (value < 0)
+                throw new Exception("SetHoursError");
+
+            if (value > 23)
+                throw new Exception("ClockOverflowError");
+            
+            hours = value;
+        }
+    }
+
+    public void Reset()
+    {
+        seconds = 0;
+        minutes = 0;
+        hours = 0;
+    }
+
+    public override string ToString()
+    {
+        if (seconds == 0)
+        {
+            if (hours == 0 && minutes == 0)
+            {
+                return $"0:00";
+            }
+            else if (minutes == 0)
+            {
+                return $"{Hours}:00:00";
+            }
+            else if (hours == 0)
+            {
+                return $"{Minutes}:00";
+            }
+            else
+            {
+                if (Minutes < 10)
+                    return $"{Hours}:0{Minutes}:00";
+
+                return $"{Hours}:{Minutes}:00";
+            }
+        }
+        else if (seconds < 10)
+        {
+            if (hours == 0 && minutes == 0)
+            {
+                return $"0:0{Seconds}";
+            }
+            else if (minutes == 0)
+            {
+                return $"{Hours}:00:0{Seconds}";
+            }
+            else if (hours == 0)
+            {
+                return $"{Minutes}:0{Seconds}";
+            }
+            else
+            {
+                if (Minutes < 10)
+                    return $"{Hours}:0{Minutes}:0{Seconds}";
+
+                return $"{Hours}:{Minutes}:0{Seconds}";
+            }
+        }
+        else
+        {
+            if (hours == 0 && minutes == 0)
+            {
+                return $"0:{Seconds}";
+            }
+            else if (minutes == 0)
+            {
+                return $"{Hours}:00:{Seconds}";
+            }
+            else if (hours == 0)
+            {
+                return $"{Minutes}:{Seconds}";
+            }
+            else
+            {
+                if (Minutes < 10)
+                    return $"{Hours}:0{Minutes}:{Seconds}";
+
+                return $"{Hours}:{Minutes}:{Seconds}";
+            }
+        }
+    }
+
+    public static bool operator ==(Clock main_cloak, Clock cloak)
+    {
+        if (main_cloak.seconds != cloak.seconds)
+            return false;
+
+        if (main_cloak.minutes != cloak.minutes)
+            return false;
+
+        if (main_cloak.hours != cloak.hours)
+            return false;
+
+        return true;
+    }
+
+    public static bool operator !=(Clock main_cloak, Clock cloak)
+    {
+        if (main_cloak.seconds != cloak.seconds)
+            return true;
+
+        if (main_cloak.minutes != cloak.minutes)
+            return true;
+
+        if (main_cloak.hours != cloak.hours)
+            return true;
+
+        return false;
+    }
+}
+
+/// <summary>
+/// Таймер
+/// </summary>
+public static class Timer
+{
+    /// <summary>
+    /// Объект для вывода времени
+    /// </summary>
+    public static Text timer;
+
+    /// <summary>
+    /// Корутина для запуска таймера
+    /// </summary>
+    private static Coroutine timerClock;
+
+    /// <summary>
+    /// Текущее время
+    /// </summary>
+    private static Clock current;
+
+    /// <summary>
+    /// Время окончания
+    /// </summary>
+    private static Clock end;
+
+    /// <summary>
+    /// Время между срабатываниями
+    /// </summary>
+    private static float wait;
+
+    /// <summary>
+    /// Шаг изменения значения
+    /// </summary>
+    private static int step;
+
+    /// <summary>
+    /// Сообщение, которое печатается перед временем
+    /// </summary>
+    private static string title;
+
+    /// <summary>
+    /// Текущее время
+    /// </summary>
+    public static Clock Current
+    {
+        get => current;
+    }
+
+    /// <summary>
+    /// Перечислитель для корутины
+    /// </summary>
+    private static IEnumerator StartTimer()
+    {
+        if (step == 0)
+            yield break;
+
+        while (true)
+        {
+            yield return new WaitForSeconds(wait);
+            current.Seconds += step;
+
+            timer.text = title + current;
+
+            if (end == current)
+            {
+                Stop();
+                yield break;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Метод, выполняемый при остановке таймера
+    /// </summary>
+    public delegate void StopTimer();
+
+    /// <summary>
+    /// Метод, выполняемый при остановке таймера
+    /// </summary>
+    public static StopTimer stopTimer;
+
+    /// <summary>
+    /// Запуск таймера
+    /// </summary>
+    /// <param name="end">Остановка таймера</param>
+    /// <param name="wait">Время между срабатываниями</param>
+    /// <param name="step">Шаг изменения значения</param>
+    /// <param name="title">Сообщение, которое выводится перед временем</param>
+    public static void Start(Clock end, float wait = 1, int step = 1, string title = "Время: ")
+    {
+        if (timer == null)
+            throw new Exception("TimerNullError");
+
+        Timer.end = end;
+        Timer.wait = wait;
+        Timer.step = step;
+        Timer.title = title;
+
+        Timer.current = new Clock();
+
+        timerClock = timer.StartCoroutine(StartTimer());
+    }
+
+    /// <summary>
+    /// Остановка таймера
+    /// </summary>
+    public static void Stop()
+    {
+        timer.StopCoroutine(timerClock);
+        stopTimer();
     }
 }
