@@ -21,8 +21,8 @@ public class StartGame : MonoBehaviour
 
     public Text timer;
 
-    public static Image[,] mapTiles;
-    public static int[,] mapTilesValue;
+    public Image[,] mapTiles;
+    public int[,] mapTilesValue;
 
     private void Start()
     {
@@ -66,6 +66,8 @@ public class StartGame : MonoBehaviour
 }
 
 [System.Serializable]
+#pragma warning disable CS0660 // Тип определяет оператор == или оператор !=, но не переопределяет Object.Equals(object o)
+#pragma warning disable CS0661 // Тип определяет оператор == или оператор !=, но не переопределяет Object.GetHashCode()
 public class Clock
 {
     private int seconds;
@@ -240,6 +242,7 @@ public class Clock
     }
 }
 
+[System.Serializable]
 /// <summary>
 /// Таймер
 /// </summary>
@@ -353,9 +356,149 @@ public static class Timer
     }
 }
 
+[System.Serializable]
+/// <summary>
+/// Карта
+/// </summary>
 public class Map
 {
-    public int mapSize = 10;
+    /// <summary>
+    /// Размер карты
+    /// </summary>
+    public int mapSize;
+
+    /// <summary>
+    /// Массив тайлов
+    /// </summary>
     public Image[,] mapTiles;
+    
+    /// <summary>
+    /// Массив информации о тайлах
+    /// </summary>
     public int[,] mapTilesValue;
+}
+
+[System.Serializable]
+/// <summary>
+/// Задача
+/// </summary>
+public class Task
+{
+    /// <summary>
+    /// Название
+    /// </summary>
+    public string title;
+
+    /// <summary>
+    /// Описание
+    /// </summary>
+    public string description;
+
+    /// <summary>
+    /// Решение
+    /// </summary>
+    public Map solution;
+    
+    /// <summary>
+    /// Стартовая карта
+    /// </summary>
+    public Map startMap;
+
+    /// <summary>
+    /// Используемые блоки
+    /// </summary>
+    public string[] blocks;
+
+    /// <summary>
+    /// Количество каждого из блоков
+    /// </summary>
+    public Dictionary<string, int> countBlocks;
+
+    /// <summary>
+    /// Рекомендованное время на решение
+    /// </summary>
+    public Clock recomendedTime;
+}
+
+[System.Serializable]
+/// <summary>
+/// Блок
+/// </summary>
+public class Block
+{
+    /// <summary>
+    /// Таблица истинности
+    /// </summary>
+    public TruthTable truthTable;
+
+    /// <summary>
+    /// Описание
+    /// </summary>
+    public string description;
+
+    /// <summary>
+    /// Название
+    /// </summary>
+    public string title;
+
+    /// <summary>
+    /// Логическая карта блока
+    /// </summary>
+    public Map map;
+
+    /// <summary>
+    /// Название изображения
+    /// </summary>
+    public string textureName;
+
+    /// <summary>
+    /// Тип блока
+    /// </summary>
+    public byte type;
+
+    public static string[] types = new string[3] { "Датчик", "Механизм", "Какой-то тип" };
+
+    public static string[] connectionType = new string[3] { "", "In", "Out" };
+}
+
+[System.Serializable]
+/// <summary>
+/// Схема обучения
+/// </summary>
+public class LearningScheme
+{
+    /// <summary>
+    /// Время на решение
+    /// </summary>
+    public Clock time;
+
+    /// <summary>
+    /// Набор задач
+    /// </summary>
+    public Task[] tasks;
+
+    /// <summary>
+    /// Название
+    /// </summary>
+    public string title;
+}
+
+[System.Serializable]
+/// <summary>
+/// Таблица истинности
+/// </summary>
+public class TruthTable
+{
+    /// <summary>
+    /// Данные
+    /// </summary>
+    public bool[,] data;
+
+    /// <summary>
+    /// Конвертация в таблицу
+    /// </summary>
+    public override string ToString()
+    {
+        return data.ToString();
+    }
 }
