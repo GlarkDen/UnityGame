@@ -1,16 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
-public class ShowCurrentObject : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class CurrentObjectTaskGame : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public Image showObject;
 
     private void Start()
     {
-        CreateBlocksVariables.ShowCurrentObject = showObject;
+        VariablesTaskGame.ShowCurrentObject = showObject;
         showObject.gameObject.SetActive(false);
     }
 
