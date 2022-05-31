@@ -4,17 +4,16 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
 
-public class CreateTileManager : MonoBehaviour, IPointerClickHandler
+public class TileManagerTaskGame : MonoBehaviour, IPointerClickHandler
 {
     public int X;
     public int Y;
     public int Value;
-    public byte Rotate;
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        Value = CreateBlocksVariables.CurrentBlock;
+        Value = VariablesTaskGame.CurrentBlock;
 
-        GetComponent<Image>().sprite = CreateBlocksVariables.Sprites[Value];
+        GetComponent<Image>().sprite = VariablesTaskGame.Sprites[Value];
     }
 }

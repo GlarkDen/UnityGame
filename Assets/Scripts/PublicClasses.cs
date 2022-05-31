@@ -1,79 +1,38 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class StartGame : MonoBehaviour
-{
-    float solutionEfficiency;
-
-    string taskText;
-
-    int mapSize = 10;
-
-    float mapScale;
-    float border = 10;
-
-    public Image tile;
-
-    public Image mapBackground;
-
-    public Text timer;
-
-    public Image[,] mapTiles;
-    public int[,] mapTilesValue;
-
-    private void Start()
-    {
-        mapScale = mapBackground.rectTransform.rect.width;
-
-        mapTiles = new Image[mapSize + 1, mapSize + 1];
-        mapTilesValue = new int[mapSize + 1, mapSize + 1];
-
-        float tileSize = (mapScale - border * 2) / mapSize;
-        float startPosX = border + tileSize / 2 - mapScale / 2;
-        float startPosY = - startPosX + mapBackground.rectTransform.anchoredPosition.y;
-
-        // Генерируем карту
-        for (int x = 1; x <= mapSize; x++)
-        {
-            for (int y = 1; y <= mapSize; y++)
-            {
-                mapTiles[x, y] = Instantiate(tile, new Vector2(startPosX + (x - 1) * tileSize, startPosY + - (y - 1) * tileSize),
-                    Quaternion.identity, mapBackground.transform);
-
-                mapTiles[x, y].rectTransform.sizeDelta = new Vector2(tileSize, tileSize);
-                mapTiles[x, y].GetComponent<TileManager>().X = x;
-                mapTiles[x, y].GetComponent<TileManager>().Y = y;
-                mapTiles[x, y].GetComponent<TileManager>().Value = 0;
-
-                mapTilesValue[x, y] = 0;
-            }
-        }
-
-        tile.gameObject.SetActive(false);
-
-        Timer.timer = timer;
-        Timer.stopTimer = StopTimer;
-        Timer.Start(new Clock(10));
-    }
-
-    public void StopTimer()
-    {
-
-    }
-}
-
+/// <summary>
+/// Часы
+/// </summary>
 [System.Serializable]
 #pragma warning disable CS0660 // Тип определяет оператор == или оператор !=, но не переопределяет Object.Equals(object o)
 #pragma warning disable CS0661 // Тип определяет оператор == или оператор !=, но не переопределяет Object.GetHashCode()
 public class Clock
 {
+    /// <summary>
+    /// Секунды
+    /// </summary>
     private int seconds;
+
+    /// <summary>
+    /// Минуты
+    /// </summary>
     private int minutes;
+
+    /// <summary>
+    /// Часы
+    /// </summary>
     private int hours;
 
+    /// <summary>
+    /// Создаёт новые часы
+    /// </summary>
+    /// <param name="seconds">Секунды</param>
+    /// <param name="minutes">Минуты</param>
+    /// <param name="hours">Часы</param>
     public Clock(int seconds = 0, int minutes = 0, int hours = 0)
     {
         this.seconds = seconds;
@@ -81,6 +40,9 @@ public class Clock
         this.hours = hours;
     }
 
+    /// <summary>
+    /// Секунды
+    /// </summary>
     public int Seconds
     {
         get => seconds;
@@ -101,6 +63,9 @@ public class Clock
         }
     }
 
+    /// <summary>
+    /// Минуты
+    /// </summary>
     public int Minutes
     {
         get => minutes;
@@ -121,6 +86,9 @@ public class Clock
         }
     }
 
+    /// <summary>
+    /// Часы
+    /// </summary>
     public int Hours
     {
         get => hours;
@@ -131,11 +99,14 @@ public class Clock
 
             if (value > 23)
                 throw new Exception("ClockOverflowError");
-            
+
             hours = value;
         }
     }
 
+    /// <summary>
+    /// Устанавливает время 00:00
+    /// </summary>
     public void Reset()
     {
         seconds = 0;
@@ -143,6 +114,10 @@ public class Clock
         hours = 0;
     }
 
+    /// <summary>
+    /// Возвращает время в формате 12:30:00
+    /// </summary>
+    /// <returns></returns>
     public override string ToString()
     {
         if (seconds == 0)
@@ -213,6 +188,11 @@ public class Clock
         }
     }
 
+    /// <summary>
+    /// Сравнивает время на двух часах
+    /// </summary>
+    /// <param name="main_cloak">Первые часы</param>
+    /// <param name="cloak">Вторые часы</param>
     public static bool operator ==(Clock main_cloak, Clock cloak)
     {
         if (main_cloak.seconds != cloak.seconds)
@@ -227,6 +207,11 @@ public class Clock
         return true;
     }
 
+    /// <summary>
+    /// Сравнивает время на двух часах
+    /// </summary>
+    /// <param name="main_cloak">Первые часы</param>
+    /// <param name="cloak">Вторые часы</param>
     public static bool operator !=(Clock main_cloak, Clock cloak)
     {
         if (main_cloak.seconds != cloak.seconds)
@@ -242,10 +227,10 @@ public class Clock
     }
 }
 
-[System.Serializable]
 /// <summary>
 /// Таймер
 /// </summary>
+[System.Serializable]
 public static class Timer
 {
     /// <summary>
@@ -371,7 +356,7 @@ public class Map
     /// Массив тайлов
     /// </summary>
     public Image[,] mapTiles;
-    
+
     /// <summary>
     /// Массив информации о тайлах
     /// </summary>
@@ -398,7 +383,7 @@ public class Task
     /// Решение
     /// </summary>
     public Map solution;
-    
+
     /// <summary>
     /// Стартовая карта
     /// </summary>
@@ -427,9 +412,19 @@ public class Task
 public class Block
 {
     /// <summary>
-    /// Таблица истинности
+    /// Создание блока
     /// </summary>
-    public TruthTable truthTable;
+    /// <param name="title">Название</param>
+    /// <param name="description">Описание</param>
+    /// <param name="texture">Картинка</param>
+    /// <param name="type">Тип</param>
+    public Block(string title = "", string description = "", byte[] texture = null, byte type = 0)
+    {
+        this.title = title;
+        this.description = description;
+        this.texture = texture;
+        this.type = type;
+    }
 
     /// <summary>
     /// Описание
@@ -442,22 +437,34 @@ public class Block
     public string title;
 
     /// <summary>
-    /// Логическая карта блока
+    /// Текстура
     /// </summary>
-    public Map map;
+    public byte[] texture;
 
+    [NonSerialized]
     /// <summary>
-    /// Название изображения
+    /// Изображение
     /// </summary>
-    public string textureName;
+    public Sprite sprite;
 
     /// <summary>
     /// Тип блока
     /// </summary>
     public byte type;
 
-    public static string[] types = new string[3] { "Датчик", "Механизм", "Какой-то тип" };
+    /// <summary>
+    /// Типы блоков
+    /// </summary>
+    public static string[] types = new string[4] { "Датчик", "Механизм", "Провод", "Логический блок" };
 
+    /// <summary>
+    /// Типы блоков
+    /// </summary>
+    public static string[] userTypes = new string[2] { "Датчик", "Механизм" };
+
+    /// <summary>
+    /// Логические входы и выходы
+    /// </summary>
     public static string[] connectionType = new string[3] { "", "In", "Out" };
 }
 
