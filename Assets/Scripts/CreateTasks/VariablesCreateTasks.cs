@@ -5,7 +5,7 @@ using UnityEngine.UI;
 using SFB;
 using System.IO;
 
-public class VariablesCreateBlock : MonoBehaviour
+public class VariablesCreateTasks : MonoBehaviour
 {
     public Image blockImage;
     private bool setImage = false;

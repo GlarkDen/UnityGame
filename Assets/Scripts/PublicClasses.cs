@@ -455,7 +455,12 @@ public class Block
     /// <summary>
     /// Типы блоков
     /// </summary>
-    public static string[] types = new string[3] { "Датчик", "Механизм", "Провод" };
+    public static string[] types = new string[4] { "Датчик", "Механизм", "Провод", "Логический блок" };
+
+    /// <summary>
+    /// Типы блоков
+    /// </summary>
+    public static string[] userTypes = new string[2] { "Датчик", "Механизм" };
 
     /// <summary>
     /// Логические входы и выходы
