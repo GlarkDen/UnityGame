@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class FinishLogin : MonoBehaviour
 {
-    public void Scene ()
+    public void Scene()
     {
         SceneManager.LoadScene("AdministratorMainMenu");
     }
