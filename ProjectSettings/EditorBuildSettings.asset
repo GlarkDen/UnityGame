@@ -17,4 +17,10 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/TaskGame.unity
     guid: 1d20519a0310c88429cf9d7b2fc6b074
+  - enabled: 1
+    path: Assets/Scenes/Registration.unity
+    guid: 83b012c653e784c4d88107a690cdbdb5
+  - enabled: 1
+    path: Assets/Scenes/User/UserMainMenu.unity
+    guid: 36492af64a62ae543a22dc51a6bc1566
   m_configObjects: {}

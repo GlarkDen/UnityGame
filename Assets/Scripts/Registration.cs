@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class FinishLogin : MonoBehaviour
+public class Registration : MonoBehaviour
 {
+    public Button buttonExit;
+
     public void Scene()
     {
-        SceneManager.LoadScene("AdministratorMainMenu");
+        SceneManager.LoadScene("Login");
     }
 
     public void Text()
@@ -16,12 +18,9 @@ public class FinishLogin : MonoBehaviour
         Debug.Log(gameObject.name);
     }
 
-    public Button buttonLogin;
-    public Button buttonFinish;
-
     void Start()
     {
-        buttonLogin.onClick.AddListener(Text);
-        buttonFinish.onClick.AddListener(Scene);
+        buttonExit.onClick.AddListener(Text);
+        buttonExit.onClick.AddListener(Scene);
     }
 }

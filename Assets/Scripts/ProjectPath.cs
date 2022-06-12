@@ -7,4 +7,5 @@ public class ProjectPath : MonoBehaviour
     public static string Blocks = "/Game/blocks";
     public static string Schemes = "/Game/schemes";
     public static string Tasks = "/Game/tasks";
+    public static string Accounts = "/Game/accounts";
 }

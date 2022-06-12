@@ -544,6 +544,7 @@ public class TruthTable
     }
 }
 
+<<<<<<< HEAD
 /// <summary>
 /// Идеально сбалансированное бинарное дерево
 /// </summary>
@@ -770,4 +771,38 @@ public class TileBinaryTree
         return data.ToString();
     }
 
+=======
+[System.Serializable]
+/// <summary>
+/// Аккаунты учеников и учителей
+/// </summary>
+public class Account
+{
+    /// <summary>
+    /// Создание аккаунта
+    /// </summary>
+    /// <param name="login">Логин</param>
+    /// <param name="password">Пароль</param>
+    public Account(string login, string password, string status)
+    {
+        this.login = login;
+        this.password = password;
+        this.status = status;
+    }
+    
+    /// <summary>
+    /// Логин аккаунта
+    /// </summary>
+    public string login;
+
+    /// <summary>
+    /// Пароль аккаунта
+    /// </summary>
+    public string password;
+
+    /// <summary>
+    /// Владелец аккаунта (Учитель, ученик)
+    /// </summary>
+    public string status;
+>>>>>>> remotes/origin/Ivakin
 }
