@@ -2,12 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System;
 
-public class StartCreateBlock : MonoBehaviour
+public class VariablesCreateSolution : MonoBehaviour
 {
-    private void Start()
+    void Start()
     {
-        
-    }
+
+    }   
 }

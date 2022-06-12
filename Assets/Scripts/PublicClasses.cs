@@ -227,6 +227,18 @@ public class Clock
     }
 }
 
+public struct Coordinate
+{
+    public int X;
+    public int Y;
+
+    public Coordinate(int x, int y)
+    {
+        X = x;
+        Y = y;
+    }
+}
+
 /// <summary>
 /// Таймер
 /// </summary>
@@ -284,6 +296,8 @@ public static class Timer
         if (step == 0)
             yield break;
 
+        timer.text = title + current;
+
         while (true)
         {
             yield return new WaitForSeconds(wait);
@@ -316,7 +330,7 @@ public static class Timer
     /// <param name="wait">Время между срабатываниями</param>
     /// <param name="step">Шаг изменения значения</param>
     /// <param name="title">Сообщение, которое выводится перед временем</param>
-    public static void Start(Clock end, float wait = 1, int step = 1, string title = "Время: ")
+    public static void Start(Clock end, float wait = 1, int step = 1, string title = "Время: ", bool reversed = false)
     {
         if (timer == null)
             throw new Exception("TimerNullError");
@@ -326,7 +340,14 @@ public static class Timer
         Timer.step = step;
         Timer.title = title;
 
-        Timer.current = new Clock();
+        if (reversed)
+        {
+            Timer.step = -step;
+            Timer.current = end;
+            Timer.end = new Clock();
+        }
+        else
+            Timer.current = new Clock();
 
         timerClock = timer.StartCoroutine(StartTimer());
     }
@@ -466,6 +487,17 @@ public class Block
     /// Логические входы и выходы
     /// </summary>
     public static string[] connectionType = new string[3] { "", "In", "Out" };
+
+    /// <summary>
+    /// Типы блоков
+    /// </summary>
+    public enum Type
+    {
+        Датчик = 0,
+        Механизм = 1,
+        Провод = 2,
+        Логический_блок = 3
+    }
 }
 
 [System.Serializable]
@@ -501,6 +533,8 @@ public class TruthTable
     /// </summary>
     public bool[,] data;
 
+    public Dictionary<int, char> blockChars;
+
     /// <summary>
     /// Конвертация в таблицу
     /// </summary>
@@ -508,4 +542,232 @@ public class TruthTable
     {
         return data.ToString();
     }
+}
+
+/// <summary>
+/// Идеально сбалансированное бинарное дерево
+/// </summary>
+public class TileBinaryTree
+{
+    /// <summary>
+    /// Информационное поле
+    /// </summary>
+    public int data;
+
+    /// <summary>
+    /// Ссылка на левую ветку дерева
+    /// </summary>
+    public TileBinaryTree left;
+
+    /// <summary>
+    /// Ссылка на правую ветку дерева
+    /// </summary>
+    public TileBinaryTree right;
+
+    /// <summary>
+    /// Объект с пустыми полями
+    /// </summary>
+    public TileBinaryTree()
+    {
+
+    }
+
+    /// <summary>
+    /// Объект с заполненными информационным полем
+    /// </summary>
+    /// <param name="data">Информационное поле</param>
+    public TileBinaryTree(int data)
+    {
+        this.data = data;
+    }
+
+    /// <summary>
+    /// Печатает дерево в консоль с отступами
+    /// </summary>
+    /// <param name="root">Корень дерева</param>
+    /// <param name="direction">#Параметр для рекурсии#</param>
+    /// <param name="indent">#Параметр для рекурсии#</param>
+    public void Show(byte direction = 0, string indent = "", string change_indent = "   ")
+    {
+        if (direction == 0)
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            Debug.Log(indent + message);
+
+            if (left != null)
+                left.Show(2, indent + change_indent, change_indent);
+
+            if (right != null)
+                right.Show(1, indent + change_indent, change_indent);
+        }
+        else if (direction == 1)
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            Debug.Log(indent + message);
+
+            if (left != null)
+                left.Show(2, indent + change_indent, change_indent);
+
+            if (right != null)
+                right.Show(1, indent + change_indent, change_indent);
+        }
+        else
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            Debug.Log(indent + message);
+
+            if (right != null)
+                right.Show(1, indent + change_indent, change_indent);
+
+            if (left != null)
+                left.Show(2, indent + change_indent, change_indent);
+        }
+    }
+
+    public void MegaShow(Text text_panel, byte direction = 0, string indent = "", string change_indent = "   ")
+    {
+        if (direction == 0)
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            text_panel.text += indent + message + "\n";
+
+            if (left != null)
+                left.MegaShow(text_panel, 2, indent + change_indent, change_indent);
+
+            if (right != null)
+                right.MegaShow(text_panel, 1, indent + change_indent, change_indent);
+        }
+        else if (direction == 1)
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            text_panel.text += indent + message + "\n";
+
+            if (left != null)
+                left.MegaShow(text_panel, 2, indent + change_indent, change_indent);
+
+            if (right != null)
+                right.MegaShow(text_panel, 1, indent + change_indent, change_indent);
+        }
+        else
+        {
+            string message = "";
+            if (data != 0)
+                message = data.ToString();
+            else
+                message = "Пусто";
+
+            text_panel.text += indent + message + "\n";
+
+            if (right != null)
+                right.MegaShow(text_panel, 1, indent + change_indent, change_indent);
+
+            if (left != null)
+                left.MegaShow(text_panel, 2, indent + change_indent, change_indent);
+        }
+    }
+
+    public List<int> GetBlocks(List<int> blocks)
+    {
+        if (left != null)
+            left.GetBlocks(blocks);
+        
+        if (right != null)
+            right.GetBlocks(blocks);
+
+        if (right == null && left == null)
+            if (data != 0)
+                blocks.Add(data);
+
+        return blocks;
+    }
+
+    /// <summary>
+    /// Возвращает все элементы дерева ввиде списка (включая корень)
+    /// </summary>
+    /// <param name="root">Корень дерева</param>
+    /// <param name="tree">Ссылка на список</param>
+    public List<int> GetData(List<int> tree)
+    {
+        if (data != 0)
+            tree.Add(data);
+
+        if (right != null)
+            right.GetData(tree);
+
+        if (left != null)
+            left.GetData(tree);
+
+        return tree;
+    }
+
+    public bool CheckCondition(Dictionary<int, bool> blockChars)
+    {
+        if (VariablesMechanic.IsLogic(data))
+        {
+            switch (data)
+            {
+                case (int)VariablesMechanic.Logics.And:
+                    return right.CheckCondition(blockChars) && left.CheckCondition(blockChars);
+
+                case (int)VariablesMechanic.Logics.Or:
+                    return right.CheckCondition(blockChars) || left.CheckCondition(blockChars);
+
+                case (int)VariablesMechanic.Logics.Xor:
+                    return right.CheckCondition(blockChars) ^ left.CheckCondition(blockChars);
+
+                case (int)VariablesMechanic.Logics.Not:
+                    return !right.CheckCondition(blockChars);
+
+                default:
+                    return false;
+            }
+        }
+        else if (VariablesMechanic.IsSensor(data))
+        {
+            return blockChars[data];
+        }
+        else if (!VariablesMechanic.IsNull(data))
+        {
+            return right.CheckCondition(blockChars); ;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Возвращает строковое представление информационного поля
+    /// </summary>
+    /// <returns>data.ToString()</returns>
+    public override string ToString()
+    {
+        return data.ToString();
+    }
+
 }

@@ -1,0 +1,26 @@
+fileFormatVersion: 2
+guid: 178017032fccb7c44b0248eb19f636b3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - and: {instanceID: 0}
+  - or: {instanceID: 0}
+  - not: {instanceID: 0}
+  - xor: {instanceID: 0}
+  - wires: {instanceID: 0}
+  - WireVertical: {fileID: 21300000, guid: 378213d9b47abd648b9da473f8d04587, type: 3}
+  - WireHorizontal: {fileID: 21300000, guid: 693d223ab6c876e45a1efed057a3aa84, type: 3}
+  - WireTopVertical: {fileID: 21300000, guid: 16a3d0885a3409443a7068a9f49364b2, type: 3}
+  - WireTopHorizontal: {fileID: 21300000, guid: 4a16da84a1b32ed479059b22133def51, type: 3}
+  - WireRigthTop: {fileID: 21300000, guid: 48604acaa8bf0c849b272331f780321f, type: 3}
+  - WireRightDown: {fileID: 21300000, guid: 68703da610130f842b227830d8203b36, type: 3}
+  - WireLeftTop: {fileID: 21300000, guid: 7123ceef5543a6246a4418a431a8800d, type: 3}
+  - WireLeftDown: {fileID: 21300000, guid: e3ab3312884155b4d8075a192a9091dd, type: 3}
+  - tile: {instanceID: 0}
+  - CurrentObject: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
