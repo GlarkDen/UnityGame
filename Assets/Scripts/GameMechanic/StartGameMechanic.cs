@@ -81,6 +81,9 @@ public class StartGameMechanic : MonoBehaviour
 
     public void GenerateMap(int mapSize, Block mehanicBlock, Image[,] tileMap = null, int[,] tileMapValue = null)
     {
+        if (!tile.gameObject.activeSelf)
+            tile.gameObject.SetActive(true);
+
         this.mehanicBlock = mehanicBlock;
         this.mapSize = mapSize;
 
@@ -164,5 +167,25 @@ public class StartGameMechanic : MonoBehaviour
     {
         mapTiles[x, y].GetComponent<TileManagerMechanic>().Value = value;
         mapTiles[x, y].GetComponent<Image>().sprite = VariablesMechanic.Sprites[value];
+    }
+
+    public void RemoveMap()
+    {
+        for (int x = 1; x <= mapSize; x++)
+            for (int y = 1; y <= mapSize; y++)
+                Destroy(mapTiles[x, y].gameObject);
+
+        mapTiles = null;
+        mapTilesValue = null;
+    }
+
+    public void RemoveBlockCount()
+    {
+        for (int i = 1; i < BlockNumberPanel.childCount; i++)
+            Destroy(BlockNumberPanel.GetChild(i).gameObject);
+
+        setSensorBlocks.Clear();
+        activateSensorBlocksCount.Clear();
+        ActivateSensorBlocks.Clear();
     }
 }

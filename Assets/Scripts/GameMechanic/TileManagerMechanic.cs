@@ -12,9 +12,6 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        //if (!VariablesMechanic.IsNull(Value) && !VariablesMechanic.IsDoubleWire(Value))
-        //    return;
-
         if (VariablesMechanic.IsNull())
             return;
 
@@ -35,6 +32,9 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
             return;
         }
+
+        if (!VariablesMechanic.IsNull(Value))
+            return;
 
         if (VariablesMechanic.CurrentBlock >= 20 && VariablesMechanic.CurrentBlock < 30)
         {
