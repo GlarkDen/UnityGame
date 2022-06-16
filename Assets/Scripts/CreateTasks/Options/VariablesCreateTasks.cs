@@ -125,6 +125,16 @@ public class VariablesCreateTasks : MonoBehaviour
         CurrentInputField = null;
     }
 
+    public static int GetBlockCount()
+    {
+        int count = 0;
+
+        foreach (var number in setBlocksCount.Values)
+            count += int.Parse(number.GetChild(0).GetComponent<InputField>().text);
+
+        return count;
+    }
+
     public void SwipChooseBlocks(bool status)
     {
         if (status) 

@@ -361,6 +361,13 @@ public class VariablesMechanic : MonoBehaviour
         {
             CountSensorBlocks[id]--;
             StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().text = CountSensorBlocks[id].ToString();
+            
+            int count = 0;
+
+            foreach (var number in CountSensorBlocks)
+                count += number;
+
+            OnUpdateSensorCount(count);
             return true;
         }
         else
@@ -393,6 +400,33 @@ public class VariablesMechanic : MonoBehaviour
 
         CountSensorBlocks[id] += change;
         StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().text = CountSensorBlocks[id].ToString();
+
+        int count = 0;
+
+        foreach (var number in CountSensorBlocks)
+            count += number;
+
+        OnUpdateSensorCount(count);
+    }
+
+    public delegate void SensorCountHandler(int count);
+
+    public static event SensorCountHandler UpdateSensorCount;
+
+    public static void OnUpdateSensorCount(int count)
+    {
+        if (UpdateSensorCount != null)
+            UpdateSensorCount(count);
+    }
+
+    public delegate void TruthTableHandler();
+
+    public static event TruthTableHandler TruthTableUpdate;
+
+    public static void OnUpdateTruthTable()
+    {
+        if (TruthTableUpdate != null)
+            TruthTableUpdate();
     }
 
     public enum Wires
@@ -760,6 +794,8 @@ public class VariablesMechanic : MonoBehaviour
 
         thisGameObject.GetComponent<VariablesMechanic>().StartCoroutine(createTruthTable(0.05f));
 
+        OnUpdateTruthTable();
+
         Thread.Sleep(100);
     }
 
@@ -968,5 +1004,10 @@ public class VariablesMechanic : MonoBehaviour
         }
 
         return result;
+    }
+
+    public static void GetBlockCount()
+    {
+
     }
 }
