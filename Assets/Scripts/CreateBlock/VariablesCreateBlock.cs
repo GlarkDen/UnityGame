@@ -119,7 +119,8 @@ public class VariablesCreateBlock : MonoBehaviour
 
     public void SaveBlock()
     {
-        Serialization.SaveBinaryFile(blocks, ProjectPath.Blocks);
+        //Serialization.SaveBinaryFile(blocks, ProjectPath.Blocks);
+        Serialization.SaveJsonFile(blocks, ProjectPath.Blocks1, false);
     }
 
     public void ResetScene()

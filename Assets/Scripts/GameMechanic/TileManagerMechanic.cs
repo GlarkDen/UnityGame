@@ -12,9 +12,6 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        //if (!VariablesMechanic.IsNull(Value) && !VariablesMechanic.IsDoubleWire(Value))
-        //    return;
-
         if (VariablesMechanic.IsNull())
             return;
 
@@ -24,6 +21,8 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             Value = (int)VariablesMechanic.Wires.WireTopHorizontal;
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
+
+            OnSetBlock();
             return;
         }
 
@@ -33,8 +32,13 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             Value = (int)VariablesMechanic.Wires.WireTopVertical;
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
+            
+            OnSetBlock();
             return;
         }
+
+        if (!VariablesMechanic.IsNull(Value))
+            return;
 
         if (VariablesMechanic.CurrentBlock >= 20 && VariablesMechanic.CurrentBlock < 30)
         {
@@ -43,6 +47,8 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
                 Value = VariablesMechanic.CurrentBlock;
                 StartGameMechanic.mapTilesValue[X, Y] = Value;
                 GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
+                
+                OnSetBlock();
 
                 if (VariablesMechanic.CountSensorBlocks[Value - VariablesMechanic.SensorStartIndex] == 0)
                     VariablesMechanic.SetCurrentBlock("null");
@@ -53,11 +59,23 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             Value = VariablesMechanic.CurrentBlock;
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
+            
+            OnSetBlock();
         }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
         VariablesMechanic.CurrentTile = this.gameObject.GetComponent<Image>();
+    }
+
+    public delegate void SetBlockHandler(int x, int y, int value);
+
+    public static event SetBlockHandler SetBlock;
+
+    public void OnSetBlock()
+    {
+        if (SetBlock != null)
+            SetBlock(X, Y, Value);
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Linq;
+using System.Threading;
 
 public class VariablesMechanic : MonoBehaviour
 {
@@ -25,11 +26,14 @@ public class VariablesMechanic : MonoBehaviour
 
     public Image CurrentObject;
 
-    public Text SolutionText;
+    public Transform solutionPanel;
 
-    public static Text solutionText;
+    public static Transform SolutionPanel;
 
     public static Image CurrentTile;
+
+    public GameObject loading;
+    public static GameObject Loading;
 
     public static Image ShowCurrentObject;
     public static int CurrentBlock = 0;
@@ -48,11 +52,14 @@ public class VariablesMechanic : MonoBehaviour
     public static TileBinaryTree solutionTree = new TileBinaryTree(-1);
     public static TruthTable truthTable = new TruthTable();
 
+    public static Color ResultColor = new Color(1f, 0.5f, 0f);
+
     private void Start()
     {
-        Combination();
+        Loading = loading;
+        Loading.SetActive(false);
 
-        solutionText = SolutionText;
+        SolutionPanel = solutionPanel;
 
         thisGameObject = gameObject;
 
@@ -75,6 +82,11 @@ public class VariablesMechanic : MonoBehaviour
         Sprites[11] = WireTopVertical;
         Sprites[12] = WireTopHorizontal;
 
+        SetBlockSprites();
+    }
+
+    public static void SetBlockSprites()
+    {
         for (int i = 0; i < CountSensors; i++)
             Sprites[20 + i] = StartGameMechanic.ActivateSensorBlocks[i].sprite;
     }
@@ -349,6 +361,13 @@ public class VariablesMechanic : MonoBehaviour
         {
             CountSensorBlocks[id]--;
             StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().text = CountSensorBlocks[id].ToString();
+            
+            int count = 0;
+
+            foreach (var number in CountSensorBlocks)
+                count += number;
+
+            OnUpdateSensorCount(count);
             return true;
         }
         else
@@ -369,12 +388,45 @@ public class VariablesMechanic : MonoBehaviour
         StartGameMechanic.setSensorBlocks[id].GetChild(2).GetComponent<Text>().color = Color.gray;
     }
 
+    private static IEnumerator createTruthTable(float wait)
+    {
+        yield return new WaitForSeconds(wait);
+        CreateThuthTable();
+    }
+
     public static void UpdateCountSensors(int id, int change)
     {
         id = id - SensorStartIndex;
 
         CountSensorBlocks[id] += change;
         StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().text = CountSensorBlocks[id].ToString();
+
+        int count = 0;
+
+        foreach (var number in CountSensorBlocks)
+            count += number;
+
+        OnUpdateSensorCount(count);
+    }
+
+    public delegate void SensorCountHandler(int count);
+
+    public static event SensorCountHandler UpdateSensorCount;
+
+    public static void OnUpdateSensorCount(int count)
+    {
+        if (UpdateSensorCount != null)
+            UpdateSensorCount(count);
+    }
+
+    public delegate void TruthTableHandler();
+
+    public static event TruthTableHandler TruthTableUpdate;
+
+    public static void OnUpdateTruthTable()
+    {
+        if (TruthTableUpdate != null)
+            TruthTableUpdate();
     }
 
     public enum Wires
@@ -710,16 +762,46 @@ public class VariablesMechanic : MonoBehaviour
             }
         }
 
-        return new TileBinaryTree(0); ;
+        return new TileBinaryTree(0);
+    }
+
+    public static void ClearTruthTable()
+    {
+        Transform currentLine = SolutionPanel.GetChild(0);
+
+        for (int j = 1; j < currentLine.childCount; j++)
+        {
+            Destroy(currentLine.GetChild(j).gameObject);
+        }
+
+        currentLine = SolutionPanel.GetChild(1);
+
+        for (int j = 1; j < currentLine.childCount; j++)
+        {
+            Destroy(currentLine.GetChild(j).gameObject);
+        }
+
+        for (int i = 2; i < SolutionPanel.childCount; i++)
+            Destroy(SolutionPanel.GetChild(i).gameObject);
+
+        SolutionPanel.GetChild(0).GetChild(0).GetComponent<Text>().text = "F";
+        SolutionPanel.GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "0";
+    }
+
+    public static void CreateThuthTableWait()
+    {
+        ClearTruthTable();
+
+        thisGameObject.GetComponent<VariablesMechanic>().StartCoroutine(createTruthTable(0.05f));
+
+        OnUpdateTruthTable();
+
+        Thread.Sleep(100);
     }
 
     public static void CreateThuthTable()
     {
         solutionTree.right = CheckSolution(solutionTree, StartGameMechanic.mehanicBlockCoodinate, (int)Direction.Down);
-
-        solutionText.text = "";
-
-        solutionTree.MegaShow(solutionText, change_indent: "---");
 
         Dictionary<int, char> blockChars = new Dictionary<int, char>();
 
@@ -728,50 +810,204 @@ public class VariablesMechanic : MonoBehaviour
 
         List<int> findBlocks = solutionTree.GetBlocks(new List<int>());
 
-        Dictionary<int, bool> blockConditions = new Dictionary<int, bool>();
+        List<Dictionary<string, bool>> blockConditions = new List<Dictionary<string, bool>>();
 
-        foreach (int block in findBlocks)
-            blockConditions[block] = true;
+        List<string> findBlocksChars = new List<string>();
 
-        Debug.Log(solutionTree.CheckCondition(blockConditions));
+        foreach (var number in findBlocks)
+        {
+            int repeatCount = findBlocksChars.Where(str => str.Contains(blockChars[number] + "")).Count();
 
-        
+            if (repeatCount != 0)
+                findBlocksChars.Add(blockChars[number] + repeatCount.ToString());
+            else
+                findBlocksChars.Add(blockChars[number] + "");
+        }
+
+        foreach (var item in Combinations(findBlocks.Count, new bool[] { false, true })) 
+        {
+            int counter = 0;
+            Dictionary<string, bool> conditions = new Dictionary<string, bool>();
+
+            foreach (var condition in item)
+            {
+                conditions[findBlocksChars[counter]] = condition;
+                counter++;
+            }
+
+            blockConditions.Add(conditions);
+        }
+
+        int numberChar = 0;
+
+        solutionTree.RenamedData(findBlocksChars, ref numberChar);
+
+        Transform currentString = null;
+        Transform currentColumn = null;
+
+        if (findBlocksChars.Count == 0)
+        {
+            SolutionPanel.GetChild(0).GetChild(0).GetComponent<Text>().text = "F";
+            SolutionPanel.GetChild(1).GetChild(0).GetChild(0).GetComponent<Text>().text = "0";
+        }
+        else
+        {
+            SolutionPanel.GetChild(0).GetChild(0).GetComponent<Text>().text = findBlocksChars[0];
+            currentString = SolutionPanel.GetChild(0).GetChild(0);
+
+            for (int i = 1; i < findBlocksChars.Count; i++)
+            {
+                currentString = Instantiate(currentString, new Vector3(0, 0, 0),
+                        Quaternion.identity, SolutionPanel.GetChild(0));
+
+                currentString.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(currentString.GetComponent<RectTransform>().anchoredPosition3D.x,
+                    currentString.GetComponent<RectTransform>().anchoredPosition3D.y, 0);
+
+                currentString.GetComponent<Text>().text = findBlocksChars[i];
+            }
+
+            currentString = Instantiate(currentString, new Vector3(0, 0, 0),
+                        Quaternion.identity, SolutionPanel.GetChild(0));
+
+            currentString.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(currentString.GetComponent<RectTransform>().anchoredPosition3D.x,
+                    currentString.GetComponent<RectTransform>().anchoredPosition3D.y, 0);
+
+            currentString.GetComponent<Text>().text = "F";
+
+            bool firstAddText = true;
+
+            int columnNumber;
+            int stringNumber = 0;
+
+            foreach (var item in blockConditions)
+            {
+                if (firstAddText)
+                {
+                    stringNumber = 1;
+
+                    currentString = SolutionPanel.GetChild(stringNumber);
+
+                    foreach (var condition in item.Values)
+                    {
+                        if (firstAddText)
+                        {
+                            currentColumn = currentString.GetChild(0);
+                            firstAddText = false;
+                        }
+                        else
+                        {
+                            currentColumn = Instantiate(currentColumn, new Vector3(0, 0, 0), 
+                                Quaternion.identity, currentString);
+
+                            currentColumn.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(currentColumn.GetComponent<RectTransform>().anchoredPosition3D.x,
+                                currentColumn.GetComponent<RectTransform>().anchoredPosition3D.y, 0);
+                        }
+
+                        if (condition)
+                        {
+                            currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                        }
+                        else
+                        {
+                            currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                        }
+                    }
+
+                    currentColumn = Instantiate(currentColumn, new Vector3(0, 0, 0),
+                                Quaternion.identity, currentString);
+
+                    currentColumn.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(currentColumn.GetComponent<RectTransform>().anchoredPosition3D.x,
+                                currentColumn.GetComponent<RectTransform>().anchoredPosition3D.y, 0);
+
+                    if (solutionTree.CheckCondition(item))
+                    {
+                        currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                    }
+                    else
+                    {
+                        currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                    }
+
+                    currentColumn.GetComponent<Image>().color = ResultColor;
+                }
+                else
+                {
+                    currentString = Instantiate(currentString, new Vector3(0, 0, 0),
+                                Quaternion.identity, SolutionPanel);
+
+                    currentString.GetComponent<RectTransform>().anchoredPosition3D = new Vector3(currentString.GetComponent<RectTransform>().anchoredPosition3D.x,
+                        currentString.GetComponent<RectTransform>().anchoredPosition3D.y, 0);
+
+                    columnNumber = 0;
+
+                    foreach (var condition in item.Values)
+                    {
+                        currentColumn = currentString.GetChild(columnNumber);
+                        columnNumber++;
+
+                        if (condition)
+                        {
+                            currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                        }
+                        else
+                        {
+                            currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                        }
+                    }
+
+                    currentColumn = currentString.GetChild(columnNumber);
+
+                    if (solutionTree.CheckCondition(item))
+                    {
+                        currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                    }
+                    else
+                    {
+                        currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                    }
+
+                    currentColumn.GetComponent<Image>().color = ResultColor;
+                }
+
+                stringNumber++;
+            }
+        }
+
+        Loading.SetActive(false);
     }
 
-    public void Combination()
+    public static List<T[]> Combinations<T>(int placesCount, T[] items)
     {
-        string[] items = { "0", "1" };
-        int n = 4;
+        int count = (int)Mathf.Pow(items.Length, placesCount);
 
-        int count = (int)Mathf.Pow(items.Length, n);
-
-        List<string[]> result = new List<string[]>(count);
+        List<T[]> result = new List<T[]>(count);
 
         for (int i = 0; i < count; i++)
-            result.Add(new string[4]);
+            result.Add(new T[placesCount]);
 
         int step = count;
 
-        for (int i = 0; i < n; i++)
+        for (int column = 0; column < placesCount; column++)
         {
             step = step / items.Length;
 
-            for (int h = 0; h < count / Mathf.Pow(items.Length, n - i); h++)
+            for (int stepNumber = 0; stepNumber < count / Mathf.Pow(items.Length, placesCount - column); stepNumber++)
             {
-                for (int j = 0; j < items.Length; j++)
+                for (int itemNumber = 0; itemNumber < items.Length; itemNumber++)
                 {
-                    for (int k = step * (j + h * items.Length); k < step * (j + h * items.Length + 1); k++)
+                    for (int str = step * (itemNumber + stepNumber * items.Length); str < step * (itemNumber + stepNumber * items.Length + 1); str++)
                     {
-                        result[k][i] = items[j];
+                        result[str][column] = items[itemNumber];
                     }
                 }
             }
         }
 
-        foreach (var str in result)
-        {
-            foreach (var num in str)
-                Debug.Log(num + " ");
-        }
+        return result;
+    }
+
+    public static void GetBlockCount()
+    {
+
     }
 }

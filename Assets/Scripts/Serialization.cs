@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using Newtonsoft.Json;
 
 public static class Serialization
 {
@@ -8,13 +9,35 @@ public static class Serialization
 
     private static int codeKey = 157;
 
-    public static void SaveJsonFile<T>(T obj, string path, bool encription = true)
+    public static void SaveJsonFileUtility<T>(T obj, string path, bool encription = true)
     {
         string jsonObject = JsonUtility.ToJson(obj);
 
         if (encription)
             jsonObject = XORCript(jsonObject);
             
+        File.WriteAllText(rootPath + "/" + path, jsonObject);
+    }
+
+    public static T LoadJsonFileUtility<T>(string path, bool decription = true)
+    {
+        string jsonObject = File.ReadAllText(rootPath + "/" + path);
+
+        if (decription)
+            jsonObject = XORCript(jsonObject);
+
+        T obj = JsonUtility.FromJson<T>(jsonObject);
+
+        return obj;
+    }
+
+    public static void SaveJsonFile<T>(T obj, string path, bool encription = true)
+    {
+        string jsonObject = JsonConvert.SerializeObject(obj);
+
+        if (encription)
+            jsonObject = XORCript(jsonObject);
+
         File.WriteAllText(rootPath + "/" + path, jsonObject);
     }
 
@@ -25,7 +48,7 @@ public static class Serialization
         if (decription)
             jsonObject = XORCript(jsonObject);
 
-        T obj = JsonUtility.FromJson<T>(jsonObject);
+        T obj = JsonConvert.DeserializeObject<T>(jsonObject);
 
         return obj;
     }
@@ -55,6 +78,31 @@ public static class Serialization
             return default(T);
         }
     }
+
+    /// <summary>
+    /// Записывает новый файл настроек
+    /// </summary>
+    /// <param name="SettingsName">Имя файла</param>
+    /// <param name="SettingsObject">Объект с настройками</param>
+    //public static void WriteSettingsFile(string SettingsName, Settings SettingsObject)
+    //{
+    //    string json = JsonSerializer.Serialize(SettingsObject);
+    //    File.WriteAllText(FilePath + SettingsName + ".set", json);
+    //}
+
+    /// <summary>
+    /// Считывает настройки из файла
+    /// </summary>
+    /// <param name="SettingsName">Имя файла</param>
+    /// <returns></returns>
+    //public static Settings ReadSettings(string SettingsName)
+    //{
+    //    string SettingsFile;
+    //    Settings SettingsObject = new Settings();
+    //    SettingsFile = File.ReadAllText(FilePath + SettingsName + ".lage");
+    //    SettingsObject = JsonSerializer.Deserialize<Settings>(SettingsFile);
+    //    return SettingsObject;
+    //}
 
     private static string XORCript(string text)
     {

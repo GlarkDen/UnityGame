@@ -555,6 +555,11 @@ public class TileBinaryTree
     public int data;
 
     /// <summary>
+    /// Информационное поле
+    /// </summary>
+    public string dataName;
+
+    /// <summary>
     /// Ссылка на левую ветку дерева
     /// </summary>
     public TileBinaryTree left;
@@ -706,6 +711,19 @@ public class TileBinaryTree
         return blocks;
     }
 
+    public void RenamedData(List<string> blockNames, ref int numberChar)
+    {
+        if (left != null)
+            left.RenamedData(blockNames, ref numberChar);
+
+        if (right != null)
+            right.RenamedData(blockNames, ref numberChar);
+
+        if (right == null && left == null)
+            if (data != 0)
+                dataName = blockNames[numberChar++];
+    }
+
     /// <summary>
     /// Возвращает все элементы дерева ввиде списка (включая корень)
     /// </summary>
@@ -725,7 +743,7 @@ public class TileBinaryTree
         return tree;
     }
 
-    public bool CheckCondition(Dictionary<int, bool> blockChars)
+    public bool CheckCondition(Dictionary<string, bool> blockChars)
     {
         if (VariablesMechanic.IsLogic(data))
         {
@@ -749,7 +767,7 @@ public class TileBinaryTree
         }
         else if (VariablesMechanic.IsSensor(data))
         {
-            return blockChars[data];
+            return blockChars[dataName];
         }
         else if (!VariablesMechanic.IsNull(data))
         {
