@@ -2197,6 +2197,7 @@ GameObject:
   - component: {fileID: 1983381227}
   - component: {fileID: 1983381229}
   - component: {fileID: 1983381228}
+  - component: {fileID: 1983381226}
   m_Layer: 0
   m_Name: Buttons
   m_TagString: Untagged
@@ -2204,6 +2205,19 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!114 &1983381226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1983381225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5999473fc64b63246ae38b27cb30f063, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  button: {fileID: 0}
 --- !u!4 &1983381227
 Transform:
   m_ObjectHideFlags: 0
