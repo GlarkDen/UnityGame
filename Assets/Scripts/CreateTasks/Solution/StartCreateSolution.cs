@@ -13,14 +13,14 @@ public class StartCreateSolution : MonoBehaviour
         restartGame = StartObject;
 
         StartObject.GetComponent<StartGameMechanic>().GenerateMap(VariablesCreateTasks.sizeMap, VariablesCreateTasks.chooseMehanicBlock);
-        StartObject.GetComponent<StartGameMechanic>().SetBlockCount(VariablesCreateTasks.sensorBlocks, VariablesCreateTasks.setBlocksCount);
+        StartObject.GetComponent<StartGameMechanic>().SetBlockCount(VariablesCreateTasks.GetBlocksList(), VariablesCreateTasks.GetBlocksCount());
         StartObject.GetComponent<StartGameMechanic>().SetTaskText(VariablesCreateTasks.taskText);
     }
 
     public static void Restart()
     {
         restartGame.GetComponent<StartGameMechanic>().GenerateMap(VariablesCreateTasks.sizeMap, VariablesCreateTasks.chooseMehanicBlock);
-        restartGame.GetComponent<StartGameMechanic>().SetBlockCount(VariablesCreateTasks.sensorBlocks, VariablesCreateTasks.setBlocksCount);
+        restartGame.GetComponent<StartGameMechanic>().SetBlockCount(VariablesCreateTasks.GetBlocksList(), VariablesCreateTasks.GetBlocksCount());
         VariablesMechanic.SetBlockSprites();
         restartGame.GetComponent<StartGameMechanic>().SetTaskText(VariablesCreateTasks.taskText);
     }

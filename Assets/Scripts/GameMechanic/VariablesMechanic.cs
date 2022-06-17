@@ -32,8 +32,13 @@ public class VariablesMechanic : MonoBehaviour
 
     public static Image CurrentTile;
 
+    public Button finishCreate;
+
     public GameObject loading;
     public static GameObject Loading;
+
+    public GameObject startMechanic;
+    public static GameObject StartMechanic;
 
     public static Image ShowCurrentObject;
     public static int CurrentBlock = 0;
@@ -50,7 +55,6 @@ public class VariablesMechanic : MonoBehaviour
     public static GameObject thisGameObject;
 
     public static TileBinaryTree solutionTree = new TileBinaryTree(-1);
-    public static TruthTable truthTable = new TruthTable();
 
     public static Color ResultColor = new Color(1f, 0.5f, 0f);
 
@@ -82,13 +86,23 @@ public class VariablesMechanic : MonoBehaviour
         Sprites[11] = WireTopVertical;
         Sprites[12] = WireTopHorizontal;
 
+        TileManagerMechanic.SetBlock += TileMapChanged;
+        CurrentObjectMechanic.RemoveTile += TileMapChanged;
+
         SetBlockSprites();
     }
 
     public static void SetBlockSprites()
     {
         for (int i = 0; i < CountSensors; i++)
-            Sprites[20 + i] = StartGameMechanic.ActivateSensorBlocks[i].sprite;
+            Sprites[20 + i] = StartGameMechanic.sensorBlockList[i].sprite;
+    }
+
+    public void TileMapChanged(int x, int y, int value)
+    {
+        finishCreate.interactable = false;
+        Loading.SetActive(true);
+        CreateThuthTableWait();
     }
 
     public static void SetCurrentBlock(string name)
@@ -383,9 +397,9 @@ public class VariablesMechanic : MonoBehaviour
     private static IEnumerator resetColor(int id)
     {
         yield return new WaitForSeconds(1);
-        StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().color = Color.gray;
+        StartGameMechanic.setSensorBlocks[id].GetChild(1).GetComponent<Text>().color = new Color(0.21f, 0.21f, 0.21f);
         StartGameMechanic.setSensorBlocks[id].GetChild(0).GetComponent<Button>().image.color = Color.white;
-        StartGameMechanic.setSensorBlocks[id].GetChild(2).GetComponent<Text>().color = Color.gray;
+        StartGameMechanic.setSensorBlocks[id].GetChild(2).GetComponent<Text>().color = new Color(0.21f, 0.21f, 0.21f);
     }
 
     private static IEnumerator createTruthTable(float wait)
@@ -419,14 +433,14 @@ public class VariablesMechanic : MonoBehaviour
             UpdateSensorCount(count);
     }
 
-    public delegate void TruthTableHandler();
+    public delegate void TruthTableHandler(TruthTable truthTable);
 
     public static event TruthTableHandler TruthTableUpdate;
 
-    public static void OnUpdateTruthTable()
+    public static void OnUpdateTruthTable(TruthTable truthTable)
     {
         if (TruthTableUpdate != null)
-            TruthTableUpdate();
+            TruthTableUpdate(truthTable);
     }
 
     public enum Wires
@@ -794,8 +808,6 @@ public class VariablesMechanic : MonoBehaviour
 
         thisGameObject.GetComponent<VariablesMechanic>().StartCoroutine(createTruthTable(0.05f));
 
-        OnUpdateTruthTable();
-
         Thread.Sleep(100);
     }
 
@@ -922,10 +934,12 @@ public class VariablesMechanic : MonoBehaviour
                     if (solutionTree.CheckCondition(item))
                     {
                         currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                        item["F"] = true;
                     }
                     else
                     {
                         currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                        item["F"] = false;
                     }
 
                     currentColumn.GetComponent<Image>().color = ResultColor;
@@ -960,10 +974,12 @@ public class VariablesMechanic : MonoBehaviour
                     if (solutionTree.CheckCondition(item))
                     {
                         currentColumn.GetChild(0).GetComponent<Text>().text = "1";
+                        item["F"] = true;
                     }
                     else
                     {
                         currentColumn.GetChild(0).GetComponent<Text>().text = "0";
+                        item["F"] = false;
                     }
 
                     currentColumn.GetComponent<Image>().color = ResultColor;
@@ -974,6 +990,31 @@ public class VariablesMechanic : MonoBehaviour
         }
 
         Loading.SetActive(false);
+
+        TruthTable truthTable = new TruthTable();
+
+        if (findBlocksChars.Count != 0)
+        {
+            if (blockConditions.Where(con => con["F"]).Count() <= blockConditions.Where(con => !con["F"]).Count())
+            {
+                truthTable.BlockConditions = blockConditions.Where(con => con["F"]).ToList();
+                truthTable.CompareCondition = true;
+            }
+            else
+            {
+                truthTable.BlockConditions = blockConditions.Where(con => !con["F"]).ToList();
+                truthTable.CompareCondition = false;
+            }
+            
+            truthTable.BlockChars = findBlocksChars;
+            truthTable.isNull = false;
+        }
+        else
+        {
+            truthTable.isNull = true;
+        }
+
+        OnUpdateTruthTable(truthTable);
     }
 
     public static List<T[]> Combinations<T>(int placesCount, T[] items)
@@ -1009,5 +1050,19 @@ public class VariablesMechanic : MonoBehaviour
     public static void GetBlockCount()
     {
 
+    }
+
+    public void ClearMap()
+    {
+        startMechanic.GetComponent<StartGameMechanic>().ClearMap();
+
+        int count = 0;
+
+        foreach (var number in CountSensorBlocks)
+            count += number;
+
+        OnUpdateSensorCount(count);
+
+        TileMapChanged(0, 0, -1);
     }
 }

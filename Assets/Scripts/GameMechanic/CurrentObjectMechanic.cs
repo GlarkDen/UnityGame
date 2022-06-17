@@ -30,15 +30,19 @@ public class CurrentObjectMechanic : MonoBehaviour, IPointerEnterHandler, IPoint
 
                 if (CurrentTileValue > 0)
                 {
-                    VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().Value = 0;
-                    StartGameMechanic.mapTilesValue[VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().X,
-                        VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().Y] = 0;
-                    VariablesMechanic.CurrentTile.sprite = VariablesMechanic.Sprites[0];
-                }
+                    int x = VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().X;
+                    int y = VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().Y;
 
-                if (VariablesMechanic.IsSensor(CurrentTileValue))
-                {
-                    VariablesMechanic.UpdateCountSensors(CurrentTileValue, 1);
+                    OnRemoveTile(x, y, VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().Value);
+
+                    VariablesMechanic.CurrentTile.GetComponent<TileManagerMechanic>().Value = 0;
+                    StartGameMechanic.mapTilesValue[x, y] = 0;
+                    VariablesMechanic.CurrentTile.sprite = VariablesMechanic.Sprites[0];
+
+                    if (VariablesMechanic.IsSensor(CurrentTileValue))
+                    {
+                        VariablesMechanic.UpdateCountSensors(CurrentTileValue, 1);
+                    }
                 }
             }
 
@@ -70,5 +74,15 @@ public class CurrentObjectMechanic : MonoBehaviour, IPointerEnterHandler, IPoint
         collision = false;
 
         showObject.gameObject.SetActive(false);
+    }
+
+    public delegate void RemoveTileHandler(int x, int y, int value);
+
+    public static event RemoveTileHandler RemoveTile;
+
+    private void OnRemoveTile(int x, int y, int value)
+    {
+        if (RemoveTile != null)
+            RemoveTile(x, y, value);
     }
 }

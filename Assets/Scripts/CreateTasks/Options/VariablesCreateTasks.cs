@@ -63,6 +63,12 @@ public class VariablesCreateTasks : MonoBehaviour
         int count;
         int currentSum = SumCountBlock;
 
+        Debug.Log(CurrentInputField.characterValidation);
+        Debug.Log(CurrentInputField.inputType);
+        Debug.Log("============================");
+
+
+
         if (!inputIsEnding)
             return '\0';
 
@@ -280,6 +286,26 @@ public class VariablesCreateTasks : MonoBehaviour
         #endregion
     }
 
+    public static List<int> GetBlocksCount()
+    {
+        List<int> blocksCount = new List<int>();
+
+        foreach (Transform value in setBlocksCount.Values)
+            blocksCount.Add(int.Parse(value.GetChild(0).GetComponent<InputField>().text));
+
+        return blocksCount;
+    }
+
+    public static List<Block> GetBlocksList()
+    {
+        List<Block> blocksList = new List<Block>();
+
+        foreach (int key in setBlocksCount.Keys)
+            blocksList.Add(sensorBlocks[key]);
+
+        return blocksList;
+    }
+
     public void ResizeMap(int changeSize)
     {
         if (sizeMap + changeSize < minSizeMap)
@@ -307,6 +333,8 @@ public class VariablesCreateTasks : MonoBehaviour
             setBlocksCount[index].GetChild(0).GetComponent<InputField>().onValidateInput += 
                 delegate (string input, int charIndex, char addedChar) { return setBlockNumber(addedChar); };
 
+            setBlocksCount[index].GetChild(1).GetChild(0).GetComponent<Text>().text = StartGameMechanic.Alphabet[setBlocksCount.Count - 1].ToString();
+
             SumCountBlock++;
 
             if (setBlocksCount.Count == MaxBlockCount || SumCountBlock == MaxBlockCount)
@@ -315,6 +343,16 @@ public class VariablesCreateTasks : MonoBehaviour
         else
         {
             SumCountBlock -= int.Parse(setBlocksCount[index].GetChild(0).GetComponent<InputField>().text);
+
+            int j = 0;
+            for (int i = 1; i < countBlockPanel.childCount; i++)
+            {
+                if (countBlockPanel.GetChild(i).gameObject == setBlocksCount[index].gameObject)
+                    continue;
+
+                countBlockPanel.GetChild(i).GetChild(1).GetChild(0).GetComponent<Text>().text = StartGameMechanic.Alphabet[j].ToString();
+                j++;
+            }
 
             Destroy(setBlocksCount[index].gameObject);
             setBlocksCount.Remove(index);

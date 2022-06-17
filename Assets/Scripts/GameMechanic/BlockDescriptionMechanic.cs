@@ -31,7 +31,7 @@ public class BlockDescriptionMechanic : MonoBehaviour, IPointerEnterHandler, IPo
 
         int blockNumber = gameObject.GetComponent<SensorBlockManagerMechanic>().Number;
 
-        BlockDescription.GetChild(0).GetComponent<Text>().text = StartGameMechanic.ActivateSensorBlocks[blockNumber].description;
+        BlockDescription.GetChild(0).GetComponent<Text>().text = StartGameMechanic.sensorBlockList[blockNumber].description;
 
         BlockDescription.gameObject.SetActive(true);
     }

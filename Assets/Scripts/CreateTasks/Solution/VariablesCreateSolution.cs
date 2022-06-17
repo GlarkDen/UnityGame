@@ -13,13 +13,11 @@ public class VariablesCreateSolution : MonoBehaviour
 
     public Button finishCreate;
 
-    private bool truthTableUpdated = false;
-
+    private TruthTable truthTable;
     private int currentSensorCount = 1;
 
     void Start()
     {
-        TileManagerMechanic.SetBlock += new TileManagerMechanic.SetBlockHandler(SetBlock);
         VariablesMechanic.UpdateSensorCount += new VariablesMechanic.SensorCountHandler(ChangeSensorCount);
         VariablesMechanic.TruthTableUpdate += new VariablesMechanic.TruthTableHandler(TruthTableUpdated);
     }
@@ -37,18 +35,14 @@ public class VariablesCreateSolution : MonoBehaviour
 
     public void FinishCreate()
     {
+        Task createTask = new Task();
 
+        createTask.mehanicBlock = StartGameMechanic.MehanicBlock;
     }
 
-    public void TruthTableUpdated()
+    public void TruthTableUpdated(TruthTable truthTable)
     {
-        truthTableUpdated = true;
-        FinishReady();
-    }
-
-    public void SetBlock(int x, int y, int value)
-    {
-        truthTableUpdated = false;
+        this.truthTable = truthTable;
         FinishReady();
     }
 
@@ -60,7 +54,7 @@ public class VariablesCreateSolution : MonoBehaviour
 
     public void FinishReady()
     {
-        if (truthTableUpdated && currentSensorCount == 0)
+        if (currentSensorCount == 0)
         {
             if (!finishCreate.interactable)
                 finishCreate.interactable = true;

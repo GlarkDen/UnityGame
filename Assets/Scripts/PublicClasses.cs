@@ -398,7 +398,7 @@ public class Task
     /// <summary>
     /// Описание
     /// </summary>
-    public string description;
+    public string text;
 
     /// <summary>
     /// Решение
@@ -406,24 +406,24 @@ public class Task
     public Map solution;
 
     /// <summary>
-    /// Стартовая карта
+    /// Управляемый блок
     /// </summary>
-    public Map startMap;
+    public Block mehanicBlock;
 
     /// <summary>
     /// Используемые блоки
     /// </summary>
-    public string[] blocks;
+    public Block[] blocks;
 
     /// <summary>
     /// Количество каждого из блоков
     /// </summary>
-    public Dictionary<string, int> countBlocks;
+    public int[] countBlocks;
 
     /// <summary>
-    /// Рекомендованное время на решение
+    /// Таблица истинности
     /// </summary>
-    public Clock recomendedTime;
+    public TruthTable truthTable;
 }
 
 [System.Serializable]
@@ -531,17 +531,13 @@ public class TruthTable
     /// <summary>
     /// Данные
     /// </summary>
-    public bool[,] data;
+    public List<Dictionary<string, bool>> BlockConditions;
 
-    public Dictionary<int, char> blockChars;
+    public bool CompareCondition;
 
-    /// <summary>
-    /// Конвертация в таблицу
-    /// </summary>
-    public override string ToString()
-    {
-        return data.ToString();
-    }
+    public List<string> BlockChars;
+
+    public bool isNull;
 }
 
 /// <summary>
