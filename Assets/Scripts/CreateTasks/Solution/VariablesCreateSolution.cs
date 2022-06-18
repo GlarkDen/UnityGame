@@ -16,10 +16,15 @@ public class VariablesCreateSolution : MonoBehaviour
     private TruthTable truthTable;
     private int currentSensorCount = 1;
 
+    private List<Task> tasks = Serialization.LoadBinaryFile<List<Task>>(ProjectPath.Tasks);
+
     void Start()
     {
         VariablesMechanic.UpdateSensorCount += new VariablesMechanic.SensorCountHandler(ChangeSensorCount);
         VariablesMechanic.TruthTableUpdate += new VariablesMechanic.TruthTableHandler(TruthTableUpdated);
+
+        TileManagerMechanic.SetBlock += TileMapChanged;
+        CurrentObjectMechanic.RemoveTile += TileMapChanged;
     }
 
     public void BackStage()
@@ -38,6 +43,21 @@ public class VariablesCreateSolution : MonoBehaviour
         Task createTask = new Task();
 
         createTask.mehanicBlock = StartGameMechanic.MehanicBlock;
+        createTask.text = VariablesCreateTasks.taskText;
+        createTask.title = VariablesCreateTasks.taskTitle;
+        createTask.solution = restartGame.GetComponent<StartGameMechanic>().SaveMap();
+        createTask.truthTable = truthTable;
+        createTask.blocks = VariablesCreateTasks.GetBlocksList();
+        createTask.countBlocks = VariablesCreateTasks.GetBlocksCount();
+        createTask.mapSize = VariablesCreateTasks.sizeMap;
+        createTask.solutionCountBlocks = VariablesMechanic.SolutionCountBlocks;
+
+        if (tasks == null)
+            tasks = new List<Task>();
+        
+        tasks.Add(createTask);
+
+        Serialization.SaveBinaryFile(tasks, ProjectPath.Tasks);
     }
 
     public void TruthTableUpdated(TruthTable truthTable)
@@ -50,6 +70,11 @@ public class VariablesCreateSolution : MonoBehaviour
     {
         currentSensorCount = count;
         FinishReady();
+    }
+
+    public void TileMapChanged(int x, int y, int value)
+    {
+        finishCreate.interactable = false;
     }
 
     public void FinishReady()

@@ -54,7 +54,6 @@ public class StartGameMechanic : MonoBehaviour
         VariablesMechanic.CountSensors = StartGameMechanic.sensorBlockList.Count;
 
         BlockNumberPanel = BlockNumber.parent;
-
         BlockNumber.GetChild(0).GetComponent<Image>().sprite = StartGameMechanic.sensorBlockList[0].sprite;
         BlockNumber.GetChild(1).GetComponent<Text>().text = this.sensorBlocksCount[0].ToString();
         BlockNumber.GetChild(2).GetComponent<Text>().text = Alphabet[0].ToString();
@@ -74,6 +73,35 @@ public class StartGameMechanic : MonoBehaviour
         }
 
         BlockDescription.SetActive(false);
+
+        VariablesMechanic.SetBlockSprites();
+    }
+
+    public void ResetBlockCount()
+    {
+        for (int i = 0; i < sensorBlockList.Count; i++)
+        {
+            setSensorBlocks[i].GetChild(1).GetComponent<Text>().text = this.sensorBlocksCount[i].ToString();
+            VariablesMechanic.CountSensorBlocks[i] = this.sensorBlocksCount[i];
+        }
+    }
+
+    public void ClearBlockCount()
+    {
+        for (int i = 0; i < sensorBlockList.Count; i++)
+        {
+            setSensorBlocks[i].GetChild(1).GetComponent<Text>().text = "0";
+            VariablesMechanic.CountSensorBlocks[i] = 0;
+        }
+    }
+
+    public void SetBlocksCount(int[] blocksCount)
+    {
+        for (int i = 0; i < blocksCount.Length; i++)
+        {
+            setSensorBlocks[i].GetChild(1).GetComponent<Text>().text = blocksCount[i].ToString();
+            VariablesMechanic.CountSensorBlocks[i] = blocksCount[i];
+        }
     }
 
     public void GenerateMap(int mapSize, Block mehanicBlock)
@@ -168,6 +196,67 @@ public class StartGameMechanic : MonoBehaviour
         
     }
 
+    public void GenerateMap(Block mehanicBlock, int[,] tileMapValue)
+    {
+        if (!tile.gameObject.activeSelf)
+            tile.gameObject.SetActive(true);
+
+        MehanicBlock = mehanicBlock;
+        mapSize = tileMapValue.Length + 1;
+
+        mapTiles = new Image[mapSize + 1, mapSize + 1];
+        mapTilesValue = new int[mapSize + 1, mapSize + 1];
+
+        float mapScale = mapBackground.rectTransform.rect.width;
+
+        float tileSize = (mapScale - border * 2) / mapSize;
+        float startPosX = border + tileSize / 2 - mapScale / 2;
+        float startPosY = -startPosX + mapBackground.rectTransform.anchoredPosition.y;
+
+        mehanicBlockCoodinate.X = mapSize / 2 + 1;
+        mehanicBlockCoodinate.Y = 2;
+
+        // Генерируем карту
+        for (int x = 1; x <= mapSize; x++)
+        {
+            for (int y = 1; y <= mapSize; y++)
+            {
+                mapTiles[x, y] = Instantiate(tile, new Vector2(startPosX + (x - 1) * tileSize, startPosY + -(y - 1) * tileSize),
+                    Quaternion.identity, mapBackground.transform);
+
+                mapTiles[x, y].rectTransform.sizeDelta = new Vector2(tileSize, tileSize);
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().X = x;
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().Y = y;
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().Value = tileMapValue[x, y];
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().GetComponent<Image>().sprite = VariablesMechanic.Sprites[tileMapValue[x, y]];
+
+                mapTilesValue[x, y] = tileMapValue[x, y];
+            }
+        }
+
+        tile.gameObject.SetActive(false);
+
+        VariablesMechanic.ShowCurrentObject.rectTransform.sizeDelta = new Vector2(tileSize * showObjectSize, tileSize * showObjectSize);
+
+    }
+
+    public void ChangeMap(int[,] tileMapValue)
+    {
+        for (int x = 1; x <= mapSize; x++)
+        {
+            for (int y = 1; y <= mapSize; y++)
+            {
+                if (x == mehanicBlockCoodinate.X && y == mehanicBlockCoodinate.Y)
+                    continue;
+
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().Value = tileMapValue[x, y];
+                mapTiles[x, y].GetComponent<TileManagerMechanic>().GetComponent<Image>().sprite = VariablesMechanic.Sprites[tileMapValue[x, y]];
+
+                mapTilesValue[x, y] = tileMapValue[x, y];
+            }
+        }
+    }
+
     public void SetTile(int x, int y, int value)
     {
         mapTiles[x, y].GetComponent<TileManagerMechanic>().Value = value;
@@ -224,7 +313,6 @@ public class StartGameMechanic : MonoBehaviour
     {
         Map map = new Map();
         map.mapSize = mapSize;
-        map.mapTiles = mapTiles;
         map.mapTilesValue = mapTilesValue;
 
         return map;

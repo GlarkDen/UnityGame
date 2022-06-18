@@ -32,8 +32,6 @@ public class VariablesMechanic : MonoBehaviour
 
     public static Image CurrentTile;
 
-    public Button finishCreate;
-
     public GameObject loading;
     public static GameObject Loading;
 
@@ -57,6 +55,8 @@ public class VariablesMechanic : MonoBehaviour
     public static TileBinaryTree solutionTree = new TileBinaryTree(-1);
 
     public static Color ResultColor = new Color(1f, 0.5f, 0f);
+
+    public static int SolutionCountBlocks;
 
     private void Start()
     {
@@ -88,8 +88,6 @@ public class VariablesMechanic : MonoBehaviour
 
         TileManagerMechanic.SetBlock += TileMapChanged;
         CurrentObjectMechanic.RemoveTile += TileMapChanged;
-
-        SetBlockSprites();
     }
 
     public static void SetBlockSprites()
@@ -100,7 +98,6 @@ public class VariablesMechanic : MonoBehaviour
 
     public void TileMapChanged(int x, int y, int value)
     {
-        finishCreate.interactable = false;
         Loading.SetActive(true);
         CreateThuthTableWait();
     }
@@ -318,6 +315,9 @@ public class VariablesMechanic : MonoBehaviour
                     CurrentBlock = (int)Wires.WireHorizontal;
                 }
                 break;
+            
+            default:
+                return;
         }
 
         ShowCurrentObject.sprite = Sprites[CurrentBlock];
@@ -807,8 +807,6 @@ public class VariablesMechanic : MonoBehaviour
         ClearTruthTable();
 
         thisGameObject.GetComponent<VariablesMechanic>().StartCoroutine(createTruthTable(0.05f));
-
-        Thread.Sleep(100);
     }
 
     public static void CreateThuthTable()
@@ -1007,14 +1005,19 @@ public class VariablesMechanic : MonoBehaviour
             }
             
             truthTable.BlockChars = findBlocksChars;
-            truthTable.isNull = false;
+            truthTable.IsNull = false;
         }
         else
         {
-            truthTable.isNull = true;
+            truthTable.IsNull = true;
         }
 
         OnUpdateTruthTable(truthTable);
+
+        int logicCount = 0;
+        solutionTree.GetCountLogic(ref logicCount);
+
+        SolutionCountBlocks = logicCount;
     }
 
     public static List<T[]> Combinations<T>(int placesCount, T[] items)
@@ -1045,11 +1048,6 @@ public class VariablesMechanic : MonoBehaviour
         }
 
         return result;
-    }
-
-    public static void GetBlockCount()
-    {
-
     }
 
     public void ClearMap()

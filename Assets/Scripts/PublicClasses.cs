@@ -355,10 +355,12 @@ public static class Timer
     /// <summary>
     /// Остановка таймера
     /// </summary>
-    public static void Stop()
+    public static void Stop(bool castFunction = true)
     {
         timer.StopCoroutine(timerClock);
-        stopTimer();
+
+        if (castFunction)
+            stopTimer();
     }
 }
 
@@ -372,11 +374,6 @@ public class Map
     /// Размер карты
     /// </summary>
     public int mapSize;
-
-    /// <summary>
-    /// Массив тайлов
-    /// </summary>
-    public Image[,] mapTiles;
 
     /// <summary>
     /// Массив информации о тайлах
@@ -406,6 +403,11 @@ public class Task
     public Map solution;
 
     /// <summary>
+    /// Количество используемых логических блоков
+    /// </summary>
+    public int solutionCountBlocks;
+
+    /// <summary>
     /// Управляемый блок
     /// </summary>
     public Block mehanicBlock;
@@ -413,24 +415,29 @@ public class Task
     /// <summary>
     /// Используемые блоки
     /// </summary>
-    public Block[] blocks;
+    public List<Block> blocks;
 
     /// <summary>
     /// Количество каждого из блоков
     /// </summary>
-    public int[] countBlocks;
+    public List<int> countBlocks;
 
     /// <summary>
     /// Таблица истинности
     /// </summary>
     public TruthTable truthTable;
+
+    /// <summary>
+    /// Размер карты
+    /// </summary>
+    public int mapSize;
 }
 
 [System.Serializable]
 /// <summary>
 /// Блок
 /// </summary>
-public class Block
+public class Block : ICloneable
 {
     /// <summary>
     /// Создание блока
@@ -498,6 +505,21 @@ public class Block
         Провод = 2,
         Логический_блок = 3
     }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    public void CreateSprite()
+    {
+        sprite = Texture.ByteToSprite(texture, 100, 100);
+    }
+
+    public object Clone()
+    {
+        Block block = new Block(title, description, texture, type);
+        block.sprite = sprite;
+        return block;
+    }
 }
 
 [System.Serializable]
@@ -537,7 +559,36 @@ public class TruthTable
 
     public List<string> BlockChars;
 
-    public bool isNull;
+    public bool IsNull = true;
+
+    public bool Compare(TruthTable truthTable)
+    {
+        if (IsNull && truthTable.IsNull)
+            return true;
+
+        if (IsNull || truthTable.IsNull)
+            return false;
+
+        if (CompareCondition != truthTable.CompareCondition)
+            return false;
+
+        if (BlockConditions.Count != truthTable.BlockConditions.Count)
+            return false;
+
+        if (BlockChars.Count != truthTable.BlockChars.Count)
+            return false;
+
+        for (int i = 0; i < BlockConditions.Count; i++)
+        {
+            foreach (string name in BlockChars)
+            {
+                if (BlockConditions[i][name] != truthTable.BlockConditions[i][name])
+                    return false;
+            }
+        }
+
+        return true;
+    }
 }
 
 /// <summary>
@@ -707,6 +758,20 @@ public class TileBinaryTree
         return blocks;
     }
 
+    public int GetCountLogic(ref int count)
+    {
+        if (VariablesMechanic.IsLogic(data))
+            count++;
+
+        if (left != null)
+            left.GetCountLogic(ref count);
+
+        if (right != null)
+            right.GetCountLogic(ref count);
+
+        return count;
+    }
+
     public void RenamedData(List<string> blockNames, ref int numberChar)
     {
         if (left != null)
@@ -817,4 +882,27 @@ public class Account
     /// Владелец аккаунта (Учитель, ученик)
     /// </summary>
     public string status;
+}
+
+public static class ListExtensions
+{
+    public static List<T> Clone<T>(this List<T> list) where T : ICloneable
+    {
+        List<T> cloneList = new List<T>(list.Count);
+
+        foreach (T item in list)
+            cloneList.Add((T)item.Clone());
+
+        return cloneList;
+    }
+
+    public static List<int> Clone(this List<int> list)
+    {
+        List<int> cloneList = new List<int>(list.Count);
+
+        foreach (int item in list)
+            cloneList.Add(item);
+
+        return cloneList;
+    }
 }
