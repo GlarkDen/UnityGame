@@ -49,9 +49,11 @@ public class Clock
         set
         {
             if (value < 0)
-                throw new Exception("SetSecondsError");
-
-            if (value > 59)
+            {
+                Minutes += value / 60 - 1;
+                seconds = 60 + value % 60;
+            }
+            else if (value > 59)
             {
                 Minutes += value / 60;
                 seconds = value % 60;
@@ -72,8 +74,10 @@ public class Clock
         set
         {
             if (value < 0)
-                throw new Exception("SetMinuteError");
-
+            {
+                Hours += value / 60 - 1;
+                minutes = 60 + value % 60;
+            }
             if (value > 59)
             {
                 Hours += value / 60;
@@ -225,6 +229,38 @@ public class Clock
 
         return false;
     }
+
+    /// <summary>
+    /// Сравнивает время на двух часах
+    /// </summary>
+    /// <param name="main_cloak">Первые часы</param>
+    /// <param name="cloak">Вторые часы</param>
+    public static bool operator >=(Clock main_cloak, Clock cloak)
+    {
+        int main_seconds = (main_cloak.hours * 60 + main_cloak.minutes) * 60 + main_cloak.seconds;
+        int seconds = (cloak.hours * 60 + cloak.minutes) * 60 + cloak.seconds;
+
+        if (main_seconds >= seconds)
+            return true;
+        else
+            return false;
+    }
+
+    /// <summary>
+    /// Сравнивает время на двух часах
+    /// </summary>
+    /// <param name="main_cloak">Первые часы</param>
+    /// <param name="cloak">Вторые часы</param>
+    public static bool operator <=(Clock main_cloak, Clock cloak)
+    {
+        int main_seconds = (main_cloak.hours * 60 + main_cloak.minutes) * 60 + main_cloak.seconds;
+        int seconds = (cloak.hours * 60 + cloak.minutes) * 60 + cloak.seconds;
+
+        if (main_seconds <= seconds)
+            return true;
+        else
+            return false;
+    }
 }
 
 public struct Coordinate
@@ -236,6 +272,16 @@ public struct Coordinate
     {
         X = x;
         Y = y;
+    }
+
+    public static bool operator ==(Coordinate coordinate1, Coordinate coordinate2)
+    {
+        return coordinate1.X == coordinate2.X && coordinate1.Y == coordinate2.Y;
+    }
+
+    public static bool operator !=(Coordinate coordinate1, Coordinate coordinate2)
+    {
+        return coordinate1.X != coordinate2.X || coordinate1.Y != coordinate2.Y;
     }
 }
 
@@ -305,10 +351,21 @@ public static class Timer
 
             timer.text = title + current;
 
-            if (end == current)
+            if (step > 0)
             {
-                Stop();
-                yield break;
+                if (current >= end)
+                {
+                    Stop();
+                    yield break;
+                }
+            }
+            else
+            {
+                if (current <= end)
+                {
+                    Stop();
+                    yield break;
+                }
             }
         }
     }
@@ -330,7 +387,7 @@ public static class Timer
     /// <param name="wait">Время между срабатываниями</param>
     /// <param name="step">Шаг изменения значения</param>
     /// <param name="title">Сообщение, которое выводится перед временем</param>
-    public static void Start(Clock end, float wait = 1, int step = 1, string title = "Время: ", bool reversed = false)
+    public static void Start(Clock end, float wait = 1, int step = 1, string title = "", bool reversed = false)
     {
         if (timer == null)
             throw new Exception("TimerNullError");

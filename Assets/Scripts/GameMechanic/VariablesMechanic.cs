@@ -602,7 +602,7 @@ public class VariablesMechanic : MonoBehaviour
         HorizontalBoth = 5
     }
 
-    public static TileBinaryTree CheckSolution(TileBinaryTree root, Coordinate tileCoordinate, int direction)
+    public static TileBinaryTree CheckSolution(TileBinaryTree root, Coordinate tileCoordinate, int direction, List<Coordinate> coordinates)
     {
         switch (direction)
         {
@@ -644,7 +644,13 @@ public class VariablesMechanic : MonoBehaviour
 
         if (IsSensor(currentValue))
         {
-            return new TileBinaryTree(currentValue);
+            if (coordinates.Contains(tileCoordinate))
+                return new TileBinaryTree(0);
+            else
+            {
+                coordinates.Add(tileCoordinate);
+                return new TileBinaryTree(currentValue);
+            }
         }
 
         if (IsLogic(currentValue))
@@ -656,12 +662,12 @@ public class VariablesMechanic : MonoBehaviour
 
             if (currentValue == (int)Logics.Not)
             {
-                new_tree.right = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Down);
+                new_tree.right = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Down, coordinates);
             }
             else
             {
-                new_tree.right = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Right);
-                new_tree.left = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Left);
+                new_tree.left = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Left, coordinates);
+                new_tree.right = CheckSolution(new_tree.right, tileCoordinate, (int)Direction.Right, coordinates);
             }
 
             return new_tree;
@@ -672,13 +678,13 @@ public class VariablesMechanic : MonoBehaviour
             if (IsDoubleWire(currentValue))
             {
                 if (direction == (int)Direction.Down)
-                    return CheckSolution(root, tileCoordinate, (int)Direction.Down);
+                    return CheckSolution(root, tileCoordinate, (int)Direction.Down, coordinates);
                 else if (direction == (int)Direction.Top)
-                    return CheckSolution(root, tileCoordinate, (int)Direction.Top);
+                    return CheckSolution(root, tileCoordinate, (int)Direction.Top, coordinates);
                 else if (direction == (int)Direction.Left)
-                    return CheckSolution(root, tileCoordinate, (int)Direction.Left);
+                    return CheckSolution(root, tileCoordinate, (int)Direction.Left, coordinates);
                 else if (direction == (int)Direction.Right)
-                    return CheckSolution(root, tileCoordinate, (int)Direction.Right);
+                    return CheckSolution(root, tileCoordinate, (int)Direction.Right, coordinates);
             }
             else
             {
@@ -735,41 +741,41 @@ public class VariablesMechanic : MonoBehaviour
                 {
                     case (int)Direction.Down:
                         if (currentValue == (int)Wires.WireVertical)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Down);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Down, coordinates);
                         else if (currentValue == (int)Wires.WireLeftTop)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Right);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Right, coordinates);
                         else if (currentValue == (int)Wires.WireRigthTop)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Left);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Left, coordinates);
                         else
                             return new TileBinaryTree(0);
 
                     case (int)Direction.Right:
                         if (currentValue == (int)Wires.WireHorizontal)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Right);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Right, coordinates);
                         else if (currentValue == (int)Wires.WireRightDown)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Down);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Down, coordinates);
                         else if (currentValue == (int)Wires.WireRigthTop)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Top);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Top, coordinates);
                         else
                             return new TileBinaryTree(0); ;
                         
                     case (int)Direction.Left:
                         if (currentValue == (int)Wires.WireHorizontal)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Left);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Left, coordinates);
                         else if (currentValue == (int)Wires.WireLeftDown)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Down);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Down, coordinates);
                         else if (currentValue == (int)Wires.WireLeftTop)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Top);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Top, coordinates);
                         else
                             return new TileBinaryTree(0);
 
                     case (int)Direction.Top:
                         if (currentValue == (int)Wires.WireVertical)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Top);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Top, coordinates);
                         else if (currentValue == (int)Wires.WireLeftDown)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Right);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Right, coordinates);
                         else if (currentValue == (int)Wires.WireRightDown)
-                            return CheckSolution(root, tileCoordinate, (int)Direction.Left);
+                            return CheckSolution(root, tileCoordinate, (int)Direction.Left, coordinates);
                         else
                             return new TileBinaryTree(0);
                 }
@@ -811,7 +817,7 @@ public class VariablesMechanic : MonoBehaviour
 
     public static void CreateThuthTable()
     {
-        solutionTree.right = CheckSolution(solutionTree, StartGameMechanic.mehanicBlockCoodinate, (int)Direction.Down);
+        solutionTree.right = CheckSolution(solutionTree, StartGameMechanic.mehanicBlockCoodinate, (int)Direction.Down, new List<Coordinate>());
 
         Dictionary<int, char> blockChars = new Dictionary<int, char>();
 
