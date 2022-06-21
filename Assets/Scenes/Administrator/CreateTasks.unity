@@ -806,6 +806,7 @@ MonoBehaviour:
   taskOptionsStage: {fileID: 2008799951}
   createSolutionStage: {fileID: 1830519419}
   restartGame: {fileID: 243132575}
+  finishCreate: {fileID: 0}
 --- !u!4 &94061394
 Transform:
   m_ObjectHideFlags: 0

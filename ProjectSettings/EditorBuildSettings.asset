@@ -26,4 +26,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Administrator/AccountManagement.unity
     guid: 432ce0cd05ec99e42b824391c935b1b8
+  - enabled: 1
+    path: Assets/Scenes/Common/DescribingBlocks.unity
+    guid: e24f769c21850a24ebd22aec6b25f144
   m_configObjects: {}
