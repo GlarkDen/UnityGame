@@ -14,6 +14,11 @@ public class Texture : MonoBehaviour
         return sprite.texture.EncodeToPNG();
     }
 
+    public static byte[] TextureToByte(Texture2D texture)
+    {
+        return texture.EncodeToPNG();
+    }
+
     public static Sprite ByteToSprite(byte[] sprite, int width, int height)
     {
         Texture2D texture = new Texture2D(width, height);

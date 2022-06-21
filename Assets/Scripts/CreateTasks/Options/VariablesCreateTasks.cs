@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
@@ -52,77 +53,18 @@ public class VariablesCreateTasks : MonoBehaviour
 
     private int SumCountBlock = 0;
 
-    public static InputField CurrentInputField;
+    public static GameObject CurrentInputCount;
 
     private bool firstNextStage = true;
 
-    public static bool inputIsEnding;
+    public static bool inputIsEnding = true;
+
+    private string saveCountText;
 
     private char setBlockNumber(char charToValidate)
     {
-        int count;
-        int currentSum = SumCountBlock;
-
-        if (!inputIsEnding)
-            return '\0';
-
-        if (CurrentInputField.text != "")
-        {
-            int lastNumber = int.Parse(CurrentInputField.text);
-
-            currentSum -= lastNumber;
-
-            if (int.TryParse(charToValidate.ToString(), out count))
-            {
-                if (currentSum + count > MaxBlockCount || count < 1)
-                {
-                    charToValidate = '\0';
-                }
-                else
-                {
-                    SumCountBlock = currentSum + count;
-
-                    int lastSum = currentSum + lastNumber;
-
-                    if (lastSum < MaxBlockCount && SumCountBlock == MaxBlockCount)
-                        SwipChooseBlocks(false);
-                    else if (lastSum == MaxBlockCount && SumCountBlock < MaxBlockCount)
-                        SwipChooseBlocks(true);
-                }
-            }
-            else
-                charToValidate = '\0';
-        }
-        else
-        {
-            SumCountBlock = 1;
-
-            foreach (var number in setBlocksCount.Values) {
-                string text = number.GetChild(0).GetComponent<InputField>().text;
-                
-                if (text != "")
-                    SumCountBlock += int.Parse(text);
-            }
-
-            if (SumCountBlock == MaxBlockCount)
-                SwipChooseBlocks(false);
-            else if (SumCountBlock < MaxBlockCount)
-                SwipChooseBlocks(true);
-        }
-
-        inputIsEnding = false;
-        
+        charToValidate = '\0';
         return charToValidate;
-    }
-
-    public void DeactivateInputField(string newText)
-    {
-        if (newText == "")
-            CurrentInputField.text = "1";
-
-        CurrentInputField.DeactivateInputField();
-
-        CurrentInputField = null;
     }
 
     public static int GetBlockCount()
@@ -156,8 +98,6 @@ public class VariablesCreateTasks : MonoBehaviour
 
         mapSizeText.text = minSizeMap.ToString();
         sizeMap = minSizeMap;
-
-        countBlockInput.onValidateInput += delegate (string input, int charIndex, char addedChar) { return setBlockNumber(addedChar); };
 
         countBlock.gameObject.SetActive(false);
 
@@ -280,6 +220,108 @@ public class VariablesCreateTasks : MonoBehaviour
         #endregion
     }
 
+    public void InputBlockCount()
+    {
+        CurrentInputCount.GetComponent<Button>().interactable = false;
+
+        SumCountBlock = 0;
+        foreach (var number in setBlocksCount.Values)
+            SumCountBlock += int.Parse(number.GetChild(0).GetChild(1).GetComponent<Text>().text);
+
+        saveCountText = CurrentInputCount.transform.GetChild(1).GetComponent<Text>().text;
+        CurrentInputCount.transform.GetChild(1).GetComponent<Text>().text = "";
+
+        CurrentInputCount.transform.GetChild(0).gameObject.SetActive(true);
+        StartCoroutine(inputNumber(CurrentInputCount.transform.GetChild(1).GetComponent<Text>()));
+    }
+
+    public void EndInput(bool result)
+    {
+        if (!result)
+            CurrentInputCount.transform.GetChild(1).GetComponent<Text>().text = saveCountText;
+
+        CurrentInputCount.transform.GetChild(0).gameObject.SetActive(false);
+        CurrentInputCount.GetComponent<Button>().interactable = true;
+        inputIsEnding = true;
+    }
+
+    public bool SetBlockCondition(int newCount)
+    {
+        int currentSum = SumCountBlock + newCount - int.Parse(saveCountText);
+
+        if (newCount > 0 && currentSum <= MaxBlockCount)
+        {
+            if (SumCountBlock < MaxBlockCount && currentSum == MaxBlockCount)
+                SwipChooseBlocks(false);
+            else if (SumCountBlock == MaxBlockCount && currentSum < MaxBlockCount)
+                SwipChooseBlocks(true);
+
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    public IEnumerator inputNumber(Text text)
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(0.001f);
+            if (Input.GetKeyDown(KeyCode.Escape))
+            {
+                EndInput(false);
+                yield break;
+            }
+            if (Input.GetKeyDown(KeyCode.Return))
+            {
+                EndInput(false);
+                yield break;
+            }
+            else if (Input.GetKeyDown(KeyCode.Mouse0))
+            {
+                EndInput(false);
+                yield break;
+            }
+            else if (Input.anyKeyDown)
+            {
+                string key = Input.inputString;
+                int keyCode;
+
+                if (int.TryParse(key, out keyCode))
+                {
+                    if (SetBlockCondition(keyCode)) 
+                    { 
+                        text.text = key;
+                        EndInput(true);
+                        yield break;
+                    }
+                }
+            }
+        }
+    }
+
+    public static List<int> GetBlocksCount()
+    {
+        List<int> blocksCount = new List<int>();
+
+        foreach (Transform value in setBlocksCount.Values)
+            blocksCount.Add(int.Parse(value.GetChild(0).GetChild(1).GetComponent<Text>().text));
+
+        return blocksCount;
+    }
+
+    public static List<Block> GetBlocksList()
+    {
+        List<Block> blocksList = new List<Block>();
+
+        foreach (int key in setBlocksCount.Keys)
+            blocksList.Add(sensorBlocks[key]);
+
+        return blocksList;
+    }
+
     public void ResizeMap(int changeSize)
     {
         if (sizeMap + changeSize < minSizeMap)
@@ -304,8 +346,9 @@ public class VariablesCreateTasks : MonoBehaviour
 
             setBlocksCount[index].GetComponent<Image>().sprite = sensorBlocks[index].sprite;
 
-            setBlocksCount[index].GetChild(0).GetComponent<InputField>().onValidateInput += 
-                delegate (string input, int charIndex, char addedChar) { return setBlockNumber(addedChar); };
+            setBlocksCount[index].GetChild(0).GetChild(0).gameObject.SetActive(false);
+
+            setBlocksCount[index].GetChild(1).GetChild(0).GetComponent<Text>().text = StartGameMechanic.Alphabet[setBlocksCount.Count - 1].ToString();
 
             SumCountBlock++;
 
@@ -314,7 +357,17 @@ public class VariablesCreateTasks : MonoBehaviour
         }
         else
         {
-            SumCountBlock -= int.Parse(setBlocksCount[index].GetChild(0).GetComponent<InputField>().text);
+            SumCountBlock -= int.Parse(setBlocksCount[index].GetChild(0).GetChild(1).GetComponent<Text>().text);
+
+            int j = 0;
+            for (int i = 1; i < countBlockPanel.childCount; i++)
+            {
+                if (countBlockPanel.GetChild(i).gameObject == setBlocksCount[index].gameObject)
+                    continue;
+
+                countBlockPanel.GetChild(i).GetChild(1).GetChild(0).GetComponent<Text>().text = StartGameMechanic.Alphabet[j].ToString();
+                j++;
+            }
 
             Destroy(setBlocksCount[index].gameObject);
             setBlocksCount.Remove(index);

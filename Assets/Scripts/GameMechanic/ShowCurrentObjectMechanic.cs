@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 public class ShowCurrentObjectMechanic : MonoBehaviour
 {
@@ -17,67 +18,45 @@ public class ShowCurrentObjectMechanic : MonoBehaviour
             lastPos = pos;
         }
 
-        if (Input.GetAxis("Mouse ScrollWheel") != 0.0f)
+        float scroll = Input.GetAxis("Mouse ScrollWheel");
+        if (scroll != 0.0f)
         {
             if (VariablesMechanic.CurrentBlock >= 5 && VariablesMechanic.CurrentBlock <= 10)
             {
-                if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
-                {
+                if (scroll > 0.0f)
                     VariablesMechanic.SetCurrentWire("forward");
-                    //transform.Rotate(0, 0, 90);
-                }
-
-                if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
-                {
+                else
                     VariablesMechanic.SetCurrentWire("back");
-                    //transform.Rotate(0, 0, -90);
-                }
             }
-
-            if (VariablesMechanic.CurrentBlock > 0 && VariablesMechanic.CurrentBlock < 5)
+            else if (VariablesMechanic.CurrentBlock > 0 && VariablesMechanic.CurrentBlock < 5)
             {
-                if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
-                {
+                if (scroll > 0.0f)
                     VariablesMechanic.SetCurrentLogic("back");
-                    //transform.Rotate(0, 0, 90);
-                }
-
-                if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
-                {
+                else
                     VariablesMechanic.SetCurrentLogic("forward");
-                    //transform.Rotate(0, 0, -90);
-                }
             }
-
-            if (VariablesMechanic.CurrentBlock >= 20 && VariablesMechanic.CurrentBlock < 30)
+            else if (VariablesMechanic.CurrentBlock >= 20 && VariablesMechanic.CurrentBlock < 30)
             {
-                if (Input.GetAxis("Mouse ScrollWheel") > 0.0f)
-                {
+                if (scroll > 0.0f)
                     VariablesMechanic.SetCurrentSensor("back");
-                    //transform.Rotate(0, 0, 90);
-                }
-
-                if (Input.GetAxis("Mouse ScrollWheel") < 0.0f)
-                {
+                else
                     VariablesMechanic.SetCurrentSensor("forward");
-                    //transform.Rotate(0, 0, -90);
-                }
             }
         }
 
-        if (VariablesMechanic.CurrentBlock >= 5 && VariablesMechanic.CurrentBlock <= 10)
+        if (Input.anyKeyDown)
         {
-            if (Input.GetKeyUp(KeyCode.W))
-                VariablesMechanic.SetCurrentWire("W");
-
-            if (Input.GetKeyUp(KeyCode.A))
-                VariablesMechanic.SetCurrentWire("A");
-
-            if (Input.GetKeyUp(KeyCode.S))
-                VariablesMechanic.SetCurrentWire("S");
-
-            if (Input.GetKeyUp(KeyCode.D))
-                VariablesMechanic.SetCurrentWire("D");
+            if (VariablesMechanic.CurrentBlock >= 5 && VariablesMechanic.CurrentBlock <= 10)
+            {
+                if (Input.GetKeyDown(KeyCode.W))
+                    VariablesMechanic.SetCurrentWire("W");
+                else if (Input.GetKeyDown(KeyCode.A))
+                    VariablesMechanic.SetCurrentWire("A");
+                else if (Input.GetKeyDown(KeyCode.S))
+                    VariablesMechanic.SetCurrentWire("S");
+                else if (Input.GetKeyDown(KeyCode.D))
+                    VariablesMechanic.SetCurrentWire("D");
+            }
         }
     }
 }

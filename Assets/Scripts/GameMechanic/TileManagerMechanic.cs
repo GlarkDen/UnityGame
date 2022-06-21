@@ -22,7 +22,7 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
 
-            OnSetBlock();
+            OnSetBlock(X, Y, Value);
             return;
         }
 
@@ -33,7 +33,7 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
             
-            OnSetBlock();
+            OnSetBlock(X, Y, Value);
             return;
         }
 
@@ -48,7 +48,7 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
                 StartGameMechanic.mapTilesValue[X, Y] = Value;
                 GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
                 
-                OnSetBlock();
+                OnSetBlock(X, Y, Value);
 
                 if (VariablesMechanic.CountSensorBlocks[Value - VariablesMechanic.SensorStartIndex] == 0)
                     VariablesMechanic.SetCurrentBlock("null");
@@ -60,7 +60,7 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
             StartGameMechanic.mapTilesValue[X, Y] = Value;
             GetComponent<Image>().sprite = VariablesMechanic.Sprites[Value];
             
-            OnSetBlock();
+            OnSetBlock(X, Y, Value);
         }
     }
 
@@ -73,9 +73,9 @@ public class TileManagerMechanic : MonoBehaviour, IPointerClickHandler, IPointer
 
     public static event SetBlockHandler SetBlock;
 
-    public void OnSetBlock()
+    public void OnSetBlock(int x, int y, int value)
     {
         if (SetBlock != null)
-            SetBlock(X, Y, Value);
+            SetBlock(x, y, value);
     }
 }
