@@ -419,6 +419,22 @@ public static class Timer
         if (castFunction)
             stopTimer();
     }
+
+    /// <summary>
+    /// Пауза таймера
+    /// </summary>
+    public static void Pause()
+    {
+        timer.StopCoroutine(timerClock);
+    }
+
+    /// <summary>
+    /// Продолжение таймера
+    /// </summary>
+    public static void Continue()
+    {
+        timerClock = timer.StartCoroutine(StartTimer());
+    }
 }
 
 [System.Serializable]

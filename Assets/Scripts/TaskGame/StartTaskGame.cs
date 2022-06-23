@@ -21,6 +21,8 @@ public class StartTaskGame : MonoBehaviour
 
     public int startTaskNumber;
 
+    public Button checkSolution;
+
     private bool isSolution = false;
 
     private Sprite saveSolutionButton;
@@ -110,6 +112,7 @@ public class StartTaskGame : MonoBehaviour
         if (isSolution)
         {
             isSolution = false;
+            checkSolution.interactable = true;
             showSolutionButton.sprite = saveSolutionButton;
             changeGame.GetComponent<StartGameMechanic>().ChangeMap(saveCurrentMap);
             changeGame.GetComponent<StartGameMechanic>().SetBlocksCount(saveCurrentBlocks);
@@ -117,6 +120,7 @@ public class StartTaskGame : MonoBehaviour
         }
         else
         {
+            checkSolution.interactable = false;
             saveCurrentBlocks = (int[])VariablesMechanic.CountSensorBlocks.Clone();
             saveCurrentMap = (int[,])StartGameMechanic.mapTilesValue.Clone();
             saveSolutionButton = showSolutionButton.sprite;
@@ -132,5 +136,15 @@ public class StartTaskGame : MonoBehaviour
     {
         if (isSolution)
             ChangeGameAndSolution();
+    }
+
+    public void PauseTimer()
+    {
+        Timer.Pause();
+    }
+
+    public void ContinueTimer()
+    {
+        Timer.Continue();
     }
 }
