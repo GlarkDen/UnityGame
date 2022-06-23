@@ -204,7 +204,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 25395821}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 1848138410}
+        m_TargetAssemblyTypeName: VariablesTaskGame, Assembly-CSharp
+        m_MethodName: Menu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!114 &25395821
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1456,7 +1468,7 @@ MonoBehaviour:
   timer: {fileID: 815396431}
   showSolutionButton: {fileID: 848191338}
   loadSavingMap: {fileID: 21300000, guid: cbbdb401115d53149bff54b6fb1d5d5c, type: 3}
-  startTaskNumber: 3
+  startTaskNumber: 1
   checkSolution: {fileID: 1229861451}
 --- !u!4 &402148179
 Transform:
@@ -2526,6 +2538,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 402148178}
+        m_TargetAssemblyTypeName: StartTaskGame, Assembly-CSharp
+        m_MethodName: SolutionToGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: -1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 402148178}
         m_TargetAssemblyTypeName: StartTaskGame, Assembly-CSharp
         m_MethodName: ChangeTask
@@ -5423,6 +5447,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
+      - m_Target: {fileID: 402148178}
+        m_TargetAssemblyTypeName: StartTaskGame, Assembly-CSharp
+        m_MethodName: SolutionToGame
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
       - m_Target: {fileID: 402148178}
         m_TargetAssemblyTypeName: StartTaskGame, Assembly-CSharp
         m_MethodName: ChangeTask

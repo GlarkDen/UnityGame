@@ -39,6 +39,8 @@ public class VariablesCreateTasks : MonoBehaviour
 
     public static Dictionary<int, Transform> setBlocksCount = new Dictionary<int, Transform>();
 
+    public Button chooseMehanic;
+
     private List<Block> blocks = Serialization.LoadBinaryFile<List<Block>>(ProjectPath.Blocks);
 
     public static List<Block> sensorBlocks = new List<Block>();
@@ -103,121 +105,129 @@ public class VariablesCreateTasks : MonoBehaviour
 
         mehanicChoosePanel.SetActive(false);
 
-        for (int i = 0; i < blocks.Count; i++)
-            blocks[i].sprite = Texture.ByteToSprite(blocks[i].texture, 100, 100);
-
-        foreach (Block block in blocks)
+        if (blocks == null || blocks.Count == 0)
         {
-            if (block.type != (byte)Block.Type.Механизм)
-                sensorBlocks.Add(block);
+            sensorBlockList.transform.GetChild(0).gameObject.SetActive(false);
+            chooseMehanic.interactable = false;
+        }
+        else
+        {
+            for (int i = 0; i < blocks.Count; i++)
+                blocks[i].sprite = Texture.ByteToSprite(blocks[i].texture, 100, 100);
+
+            foreach (Block block in blocks)
+            {
+                if (block.type != (byte)Block.Type.Механизм)
+                    sensorBlocks.Add(block);
+                else
+                    mehanicBlocks.Add(block);
+            }
+
+            #region Список датчиков
+            int sensorListWidth = 0;
+
+            List<Transform> panelSensorList = new List<Transform>();
+
+            for (int i = 0; i < sensorBlockList.transform.childCount; i++)
+                panelSensorList.Add(sensorBlockList.transform.GetChild(i));
+
+            sensorListWidth = panelSensorList[0].childCount;
+
+            for (int i = 0; i < sensorListWidth; i++)
+            {
+                Transform panelObject = panelSensorList[0].transform.GetChild(i);
+                setSensorBlocks.Add(panelObject.GetChild(0));
+                setSensorBlocks.Add(panelObject.GetChild(0).GetChild(0));
+            }
+
+            int panelSensorCount = sensorBlocks.Count / sensorListWidth + sensorBlocks.Count % sensorListWidth;
+
+            if (sensorBlocks.Count == 1)
+            {
+                setSensorBlocks[0].GetComponent<Image>().sprite = sensorBlocks[0].sprite;
+                setSensorBlocks[1].GetComponent<Image>().sprite = sensorBlocks[0].sprite;
+                Destroy(setSensorBlocks[2].parent.gameObject);
+                setSensorBlocks.RemoveAt(2);
+            }
             else
-                mehanicBlocks.Add(block);
-        }
-
-        #region Список датчиков
-        int sensorListWidth = 0;
-
-        List<Transform> panelSensorList = new List<Transform>();
-
-        for (int i = 0; i < sensorBlockList.transform.childCount; i++)
-            panelSensorList.Add(sensorBlockList.transform.GetChild(i));
-
-        sensorListWidth = panelSensorList[0].childCount;
-
-        for (int i = 0; i < sensorListWidth; i++)
-        {
-            Transform panelObject = panelSensorList[0].transform.GetChild(i);
-            setSensorBlocks.Add(panelObject.GetChild(0));
-            setSensorBlocks.Add(panelObject.GetChild(0).GetChild(0));
-        }
-
-        int panelSensorCount = sensorBlocks.Count / sensorListWidth + sensorBlocks.Count % sensorListWidth;
-
-        if (sensorBlocks.Count == 1)
-        {
-            setSensorBlocks[0].GetComponent<Image>().sprite = sensorBlocks[0].sprite;
-            setSensorBlocks[1].GetComponent<Image>().sprite = sensorBlocks[0].sprite;
-            Destroy(setSensorBlocks[2].parent.gameObject);
-            setSensorBlocks.RemoveAt(2);
-        }
-        else
-        {
-            for (int i = 0; i < panelSensorCount - panelSensorList.Count; i++)
             {
-                Transform panel = Instantiate(panelSensorList[0], new Vector2(0, 0),
-                    Quaternion.identity, sensorBlockList.transform);
-
-                for (int j = 0; j < sensorListWidth; j++)
+                for (int i = 0; i < panelSensorCount - panelSensorList.Count; i++)
                 {
-                    Transform panelObject = panel.transform.GetChild(j);
-                    setSensorBlocks.Add(panelObject.GetChild(0));
-                    setSensorBlocks.Add(panelObject.GetChild(0).GetChild(0));
-                }
-            }
+                    Transform panel = Instantiate(panelSensorList[0], new Vector2(0, 0),
+                        Quaternion.identity, sensorBlockList.transform);
 
-            for (int i = 0; i < setSensorBlocks.Count; i += 2)
-            {
-                if (sensorBlocks.Count == i / 2)
-                {
-                    Destroy(setSensorBlocks[i].parent.gameObject);
-                    setSensorBlocks.RemoveAt(i);
-                    break;
+                    for (int j = 0; j < sensorListWidth; j++)
+                    {
+                        Transform panelObject = panel.transform.GetChild(j);
+                        setSensorBlocks.Add(panelObject.GetChild(0));
+                        setSensorBlocks.Add(panelObject.GetChild(0).GetChild(0));
+                    }
                 }
 
-                setSensorBlocks[i].GetComponent<Image>().sprite = sensorBlocks[i / 2].sprite;
-                setSensorBlocks[i + 1].GetComponent<Image>().sprite = sensorBlocks[i / 2].sprite;
-
-                setSensorBlocks[i].GetComponentInParent<BlockListData>().index = i / 2;
-            }
-        }
-        #endregion
-
-        #region Список механизмов
-        int mehanicListWidth = 0;
-
-        List<Transform> panelMehanicList = new List<Transform>();
-
-        panelMehanicList.Add(mehanicBlockList.transform.GetChild(0));
-
-        mehanicListWidth = panelMehanicList[0].childCount;
-
-        for (int i = 0; i < mehanicListWidth; i++)
-            setMehanicBlocks.Add(panelMehanicList[0].transform.GetChild(i));
-
-        int panelMehanicCount = mehanicBlocks.Count / mehanicListWidth + mehanicBlocks.Count % mehanicListWidth;
-
-        if (mehanicBlocks.Count == 1)
-        {
-            setMehanicBlocks[0].GetComponent<Image>().sprite = mehanicBlocks[0].sprite;
-            Destroy(setMehanicBlocks[1].gameObject);
-            setMehanicBlocks.RemoveAt(1);
-        }
-        else
-        {
-            for (int i = 0; i < panelMehanicCount - panelMehanicList.Count; i++)
-            {
-                Transform panel = Instantiate(panelMehanicList[0], new Vector2(0, 0),
-                    Quaternion.identity, mehanicBlockList.transform);
-
-                for (int j = 0; j < mehanicListWidth; j++)
-                    setMehanicBlocks.Add(panel.transform.GetChild(j));
-            }
-
-            for (int i = 0; i < setMehanicBlocks.Count; i++)
-            {
-                if (mehanicBlocks.Count == i)
+                for (int i = 0; i < setSensorBlocks.Count; i += 2)
                 {
-                    Destroy(setMehanicBlocks[i].gameObject);
-                    setMehanicBlocks.RemoveAt(i);
-                    break;
+                    if (sensorBlocks.Count == i / 2)
+                    {
+                        Destroy(setSensorBlocks[i].parent.gameObject);
+                        setSensorBlocks.RemoveAt(i);
+                        break;
+                    }
+
+                    setSensorBlocks[i].GetComponent<Image>().sprite = sensorBlocks[i / 2].sprite;
+                    setSensorBlocks[i + 1].GetComponent<Image>().sprite = sensorBlocks[i / 2].sprite;
+
+                    setSensorBlocks[i].GetComponentInParent<BlockListData>().index = i / 2;
+                }
+            }
+            #endregion
+
+            #region Список механизмов
+            int mehanicListWidth = 0;
+
+            List<Transform> panelMehanicList = new List<Transform>();
+
+            panelMehanicList.Add(mehanicBlockList.transform.GetChild(0));
+
+            mehanicListWidth = panelMehanicList[0].childCount;
+
+            for (int i = 0; i < mehanicListWidth; i++)
+                setMehanicBlocks.Add(panelMehanicList[0].transform.GetChild(i));
+
+            int panelMehanicCount = mehanicBlocks.Count / mehanicListWidth + mehanicBlocks.Count % mehanicListWidth;
+
+            if (mehanicBlocks.Count == 1)
+            {
+                setMehanicBlocks[0].GetComponent<Image>().sprite = mehanicBlocks[0].sprite;
+                Destroy(setMehanicBlocks[1].gameObject);
+                setMehanicBlocks.RemoveAt(1);
+            }
+            else
+            {
+                for (int i = 0; i < panelMehanicCount - panelMehanicList.Count; i++)
+                {
+                    Transform panel = Instantiate(panelMehanicList[0], new Vector2(0, 0),
+                        Quaternion.identity, mehanicBlockList.transform);
+
+                    for (int j = 0; j < mehanicListWidth; j++)
+                        setMehanicBlocks.Add(panel.transform.GetChild(j));
                 }
 
-                setMehanicBlocks[i].GetComponent<Image>().sprite = mehanicBlocks[i].sprite;
+                for (int i = 0; i < setMehanicBlocks.Count; i++)
+                {
+                    if (mehanicBlocks.Count == i)
+                    {
+                        Destroy(setMehanicBlocks[i].gameObject);
+                        setMehanicBlocks.RemoveAt(i);
+                        break;
+                    }
 
-                setMehanicBlocks[i].GetComponent<BlockListData>().index = i;
+                    setMehanicBlocks[i].GetComponent<Image>().sprite = mehanicBlocks[i].sprite;
+
+                    setMehanicBlocks[i].GetComponent<BlockListData>().index = i;
+                }
             }
+            #endregion
         }
-        #endregion
     }
 
     public void InputBlockCount()

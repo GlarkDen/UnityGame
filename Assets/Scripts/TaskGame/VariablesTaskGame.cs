@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class VariablesTaskGame : MonoBehaviour
 {
@@ -65,4 +66,11 @@ public class VariablesTaskGame : MonoBehaviour
     {
         StopCoroutine(falseAnswerOff);
     }
+
+    public void Menu()
+    {
+        SceneManager.LoadScene("AdministratorMainMenu");
+    }
+
+
 }

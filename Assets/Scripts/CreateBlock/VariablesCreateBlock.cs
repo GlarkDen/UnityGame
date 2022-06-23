@@ -22,6 +22,8 @@ public class VariablesCreateBlock : MonoBehaviour
 
     public static byte Type;
 
+    public Sprite resetScene;
+
     private string blockTitleText = "";
     private string blockDescriptionText = "";
 
@@ -128,7 +130,7 @@ public class VariablesCreateBlock : MonoBehaviour
         blockTitleText = "";
         blockDescriptionText = "";
 
-        blockImage.sprite = null;
+        blockImage.sprite = resetScene;
 
         createBlock.interactable = false;
     }

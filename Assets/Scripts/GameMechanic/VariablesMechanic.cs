@@ -335,7 +335,7 @@ public class VariablesMechanic : MonoBehaviour
                 break;
 
             case "back":
-                if (CurrentBlock > 2)
+                if (CurrentBlock > 1)
                     CurrentBlock--;
                 else
                     CurrentBlock = 4;

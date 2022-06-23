@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class VariablesCreateSolution : MonoBehaviour
 {
@@ -56,8 +57,6 @@ public class VariablesCreateSolution : MonoBehaviour
             tasks = new List<Task>();
         
         tasks.Add(createTask);
-
-        Serialization.SaveBinaryFile(tasks, ProjectPath.Tasks);
     }
 
     public void TruthTableUpdated(TruthTable truthTable)
@@ -86,5 +85,12 @@ public class VariablesCreateSolution : MonoBehaviour
         }
         else if (finishCreate.interactable)
             finishCreate.interactable = false;
+    }
+
+    public void Menu()
+    {
+        Serialization.SaveBinaryFile(tasks, ProjectPath.Tasks);
+
+        SceneManager.LoadScene("AdministratorMainMenu");
     }
 }
