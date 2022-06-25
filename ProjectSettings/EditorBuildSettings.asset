@@ -15,12 +15,24 @@ EditorBuildSettings:
     path: Assets/Scenes/Administrator/CreateBlocks.unity
     guid: 8a5d122f730d3954ea21e0e74199e24c
   - enabled: 1
-    path: Assets/Scenes/TaskGame.unity
-    guid: 1d20519a0310c88429cf9d7b2fc6b074
-  - enabled: 1
     path: Assets/Scenes/Registration.unity
     guid: 83b012c653e784c4d88107a690cdbdb5
   - enabled: 1
+    path: Assets/Scenes/TaskGame.unity
+    guid: 1d20519a0310c88429cf9d7b2fc6b074
+  - enabled: 1
     path: Assets/Scenes/User/UserMainMenu.unity
     guid: 36492af64a62ae543a22dc51a6bc1566
+  - enabled: 1
+    path: Assets/Scenes/Administrator/AccountManagement.unity
+    guid: 432ce0cd05ec99e42b824391c935b1b8
+  - enabled: 1
+    path: Assets/Scenes/Common/DescribingBlocks.unity
+    guid: eecdf176a2edf1c42bb17ad341649b54
+  - enabled: 1
+    path: Assets/Scenes/Common/DescribingBlocksForAdmin.unity
+    guid: e24f769c21850a24ebd22aec6b25f144
+  - enabled: 1
+    path: Assets/Scenes/Administrator/CreateTasks.unity
+    guid: dce7d934bfd17b6429c8648db712016d
   m_configObjects: {}

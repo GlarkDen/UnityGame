@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class BlockDescriptionOptions : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
+public class DescriptionBlock : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     public RectTransform BlockDescription;
     private Coroutine waitShow;
@@ -29,10 +29,9 @@ public class BlockDescriptionOptions : MonoBehaviour, IPointerEnterHandler, IPoi
             new Vector2(Input.mousePosition.x - (Screen.width + BlockDescription.sizeDelta.x) / 2,
             Input.mousePosition.y - (Screen.height + BlockDescription.sizeDelta.y) / 2);
 
-        //int blockNumber = this.transform.parent.GetComponent<BlockListData>().index;
+        int blockNumber = this.transform.parent.GetComponent<BlockListData>().index;
 
-        //BlockDescription.GetChild(0).GetComponent<Text>().text = VariablesCreateTasks.sensorBlocks[blockNumber].description;
-        BlockDescription.GetChild(0).GetComponent<Text>().text = VariablesDescribingBlocks.blocks[0].description;
+        BlockDescription.GetChild(0).GetComponent<Text>().text = VariablesCreateTasks.sensorBlocks[blockNumber].description;
 
         BlockDescription.gameObject.SetActive(true);
     }
